@@ -1,0 +1,42 @@
+---
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+import Botao from "./Botao.astro";
+import { LINKS } from "../config";
+---
+
+<Secao id="aula-gratis" fundo="areia">
+  <div class="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <div>
+      <TituloSecao inicio="Aula experimental" enfase="gratuita" />
+
+      <p class="mt-5 max-w-[52ch] text-corpo text-roxo/80">
+        Antes de escolher um plano, conheça como o Clube funciona.
+      </p>
+
+      <p class="mt-5 max-w-[52ch] text-corpo font-medium text-roxo">
+        Sua primeira experiência com o Clube começa aqui.
+      </p>
+
+      <div class="mt-7 hidden lg:block">
+        <Botao href={LINKS.aulaGratis} class="px-8">Agendar minha aula experimental</Botao>
+      </div>
+    </div>
+
+    <div class="rounded-card bg-white p-[18px] lg:p-8">
+      <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-roxo/70">
+        30 minutos
+      </p>
+
+      <p class="mt-4 text-apoio text-cinza">
+        A aula experimental tem duração de 30 minutos e é uma oportunidade para entender melhor a
+        metodologia, apresentar objetivos, falar sobre experiências anteriores com o idioma e
+        identificar os principais pontos a desenvolver.
+      </p>
+    </div>
+
+    <div class="lg:hidden">
+      <Botao href={LINKS.aulaGratis} class="w-full">Agendar minha aula experimental</Botao>
+    </div>
+  </div>
+</Secao>

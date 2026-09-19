@@ -1,0 +1,180 @@
+---
+import { Picture } from "astro:assets";
+import Secao from "./Secao.astro";
+import Carrossel from "./Carrossel.astro";
+import Botao from "./Botao.astro";
+import { LINKS } from "../config";
+import karoline from "../assets/karoline.jpeg";
+import giovanna from "../assets/giovanna.jpeg";
+import paula from "../assets/paula.jpeg";
+import poliana from "../assets/poliana.jpeg";
+import luiza from "../assets/luiza.jpeg";
+import graziele from "../assets/graziele.jpeg";
+import milyena from "../assets/milyena.jpeg";
+
+/**
+ * Cada professora manda a própria foto e o próprio texto — por isso o card
+ * cresce com o conteúdo em vez de fixar a altura. `saudacao` é a linha de
+ * abertura no idioma que ela ensina; `paragrafos` é o texto como ela escreveu.
+ *
+ * `posicaoFoto` só aparece quando o corte 3/4 centralizado não enquadra bem o
+ * rosto (foto vertical demais, por exemplo). A classe precisa estar escrita por
+ * extenso aqui: o Tailwind lê o código-fonte e não geraria a regra a partir de
+ * uma string montada em tempo de execução.
+ */
+const professoras = [
+  {
+    nome: "Karoline",
+    tag: "Inglês",
+    saudacao: "Hi! I'm Karoline.",
+    paragrafos: [
+      "Sou do Rio de Janeiro e professora de inglês há mais de 5 anos. Minha paixão pelo idioma começou dando aulas para crianças. Sou certificada pela Cambridge (FCE e CAE) e já atuei como tradutora em eventos.",
+      "Já morei na Alemanha e em Dubai, onde o inglês fazia parte da minha rotina e pude vivenciar de perto diferentes culturas, conhecer pessoas e ouvir suas histórias. Amo viajar, praia e conhecer lugares novos.",
+    ],
+    foto: karoline,
+    alt: "Karoline, de cabelos longos loiros, sorrindo levemente sob a luz do fim de tarde.",
+  },
+  {
+    nome: "Giovanna",
+    tag: "Inglês",
+    saudacao: "Hi! I'm Giovanna.",
+    paragrafos: [
+      "Tenho 13 anos de experiência como professora de inglês e me apaixonei pelo idioma ainda na infância. Foi ali que descobri como aprender uma nova língua pode abrir portas para um universo cultural completamente novo.",
+      "Tenho experiência com aulas in-company para profissionais de diferentes áreas.",
+      "Adoro estudar outros idiomas, ouvir música, desenhar e assistir a filmes e séries. Meus gêneros favoritos são terror e fantasia.",
+    ],
+    foto: giovanna,
+    alt: "Giovanna, de cabelos longos escuros e blusa vinho, apoiando o rosto na mão.",
+  },
+  {
+    nome: "Paula",
+    tag: "Espanhol",
+    saudacao: "¡Hola! Soy Paula.",
+    paragrafos: [
+      "Sou formada em Letras, tenho pós-graduação em Língua Espanhola e certificação SIELE. Tenho experiência com alunos brasileiros e estrangeiros.",
+      "Já vivi no Chile e tive a oportunidade de conhecer mais de perto a língua e a cultura hispânica.",
+      "Dou aulas de espanhol para brasileiros e português para estrangeiros.",
+      "Sou apaixonada por idiomas, literatura e cultura. Para mim, aprender espanhol é também ganhar confiança para se comunicar e conhecer novas culturas.",
+    ],
+    foto: paula,
+    alt: "Paula, de cabelos longos escuros e blusa rosa, sorrindo diante de uma parede de madeira com um quadro colorido.",
+  },
+  {
+    nome: "Poliana",
+    tag: "Inglês e francês",
+    saudacao: "Hello, I'm Poliana!",
+    paragrafos: [
+      "Sou graduanda em Relações Internacionais e falo português, inglês e francês. Dou aulas de inglês e francês há 10 anos.",
+      "Sou apaixonada por línguas, culturas e viagens, e esse interesse também influenciou minha escolha por Relações Internacionais. Gosto de conhecer novos lugares, ter contato com diferentes culturas e aprender novas formas de se comunicar.",
+    ],
+    foto: poliana,
+    alt: "Poliana, de cabelos ondulados escuros e óculos de armação fina, olhando para a câmera.",
+    posicaoFoto: "object-[50%_35%]",
+  },
+  {
+    nome: "Luiza",
+    tag: "Inglês",
+    saudacao: "Hello, I'm Luiza!",
+    paragrafos: [
+      "Sou graduanda em Biomedicina e tenho certificação Cambridge Advanced (CAE). Também tenho experiência com preparação para exames de proficiência, especialmente no formato Cambridge.",
+      "Participei da International Student Week in Ilmenau, na Alemanha, como representante do Brasil, em uma experiência internacional com participantes de diversos países.",
+      "Tenho muito interesse por idiomas, ciência, viagens e diferentes culturas. Além do inglês, também estudo espanhol e alemão.",
+    ],
+    foto: luiza,
+    alt: "Luiza, de casaco bege e óculos de sol na cabeça, diante da Catedral de Pedra de Canela.",
+  },
+  {
+    nome: "Graziele",
+    tag: "Inglês",
+    saudacao: "Hello, I'm Graziele!",
+    paragrafos: [
+      "Sou formada em Pedagogia e professora de inglês há 4 anos. Também estudo francês e tenho grande interesse por idiomas, educação e diferentes formas de aprendizagem.",
+      "No Clube, além das aulas de inglês, também sou responsável por conduzir as aulas experimentais, sendo um dos primeiros contatos dos alunos com a metodologia e com o funcionamento das aulas.",
+    ],
+    foto: graziele,
+    alt: "Graziele, de cabelos cacheados e óculos, em frente à sua mesa de trabalho com notebook e plantas.",
+  },
+  {
+    nome: "Milyena",
+    tag: "Inglês",
+    saudacao: "Hello, I'm Milyena!",
+    paragrafos: [
+      "Sou formada em História, com especialização em Metodologias Ativas, e dou aulas de inglês há 3 anos. Já trabalhei com diferentes faixas etárias e perfis de alunos.",
+      "Sou apaixonada pelo universo da cultura pop, e muito do meu inglês foi desenvolvido conversando com pessoas de diferentes lugares do mundo sobre assuntos que gosto e pesquisando sobre meus próprios interesses.",
+    ],
+    foto: milyena,
+    alt: "Milyena, de cabelos longos cacheados, sorrindo em frente a uma parede clara.",
+  },
+];
+
+/** A foto ocupa 112 CSS px no card; 3× cobre tela retina. */
+const LARGURAS = [112, 224, 336];
+const SIZES = "112px";
+---
+
+<Secao id="professoras" fundo="creme">
+  <h2 class="max-w-[20ch] text-titulo font-semibold text-roxo">
+    Nossas <em class="italic">professoras</em>
+  </h2>
+
+  <p class="mt-4 max-w-[62ch] text-corpo text-cinza">
+    Cada professora traz um jeito de ensinar, uma bagagem e experiências diferentes com o idioma.
+    Algumas já viveram fora, outras atuam há anos com ensino, e todas chegam preparadas para
+    acompanhar o aprendizado de perto. Depois do primeiro contato, cada aluno é direcionado à
+    professora que mais combina com seu perfil, objetivos e disponibilidade, seguindo com ela ao
+    longo de toda a jornada.
+  </p>
+
+  <Carrossel
+    rotulo="Professoras do Clube"
+    itens={professoras.length}
+    sempreCarrossel
+    class="mt-8 text-roxo"
+  >
+    {
+      professoras.map((professora) => (
+        <article class="flex w-[300px] flex-col rounded-card bg-white p-[14px] lg:p-5">
+          {/* Foto e identificação lado a lado: o retrato fica pequeno e o texto
+              da professora, que é o conteúdo principal do card, ganha espaço. */}
+          <div class="flex items-center gap-3">
+            <Picture
+              src={professora.foto}
+              widths={LARGURAS}
+              sizes={SIZES}
+              formats={["avif", "webp"]}
+              fallbackFormat="webp"
+              alt={professora.alt}
+              loading="lazy"
+              decoding="async"
+              class:list={[
+                "aspect-[3/4] w-[112px] shrink-0 rounded-caixa object-cover",
+                professora.posicaoFoto ?? "object-center",
+              ]}
+            />
+
+            <div>
+              <h3 class="text-subtitulo font-semibold leading-tight text-roxo">
+                {professora.nome}
+              </h3>
+              <span class="mt-2 inline-block rounded-pill bg-lavanda px-[9px] py-[4px] text-miudo font-medium text-roxo">
+                {professora.tag}
+              </span>
+            </div>
+          </div>
+
+          <p class="mt-4 font-display text-corpo italic text-roxo">{professora.saudacao}</p>
+
+          {professora.paragrafos.map((paragrafo) => (
+            <p class="mt-3 text-miudo text-cinza">{paragrafo}</p>
+          ))}
+        </article>
+      ))
+    }
+  </Carrossel>
+
+  <div class="mt-6 sm:flex sm:justify-center lg:mt-8">
+    <Botao href={LINKS.professoras} class="w-full sm:w-auto sm:px-8">
+      Conhecer as 10 professoras
+    </Botao>
+  </div>
+</Secao>

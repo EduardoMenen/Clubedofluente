@@ -1,0 +1,369 @@
+---
+/**
+ * Carrossel de cards com imagem de fundo e texto sobreposto no rodapé.
+ *
+ * Decisões estruturais (não "otimizar" sem reler):
+ * - A IMAGEM é que sai do fluxo (`absolute inset-0`); o bloco de texto continua
+ *   `static` e só sobe na pilha com `z-index: 1`. É isso que permite o card
+ *   crescer junto com o conteúdo.
+ * - `flex-col` + `justify-end` (nunca `column-reverse`: lá `flex-end` alinharia
+ *   ao topo, porque `flex-end` respeita a inversão do eixo).
+ * - O texto vem antes da imagem no HTML: ordem de leitura e SEO.
+ * - Sem loop infinito e sem lib: scroll-snap nativo + JS vanilla.
+ */
+import { Picture } from "astro:assets";
+
+export interface CardCarrossel {
+  /** Ícone curto (emoji ou 1–2 caracteres). Decorativo. */
+  icone?: string;
+  titulo: string;
+  texto: string;
+  /** Descrição da foto — as imagens são conteúdo, não decoração. */
+  alt: string;
+  /**
+   * Foto importada de `src/assets/` — ex.: `import foto from "../assets/x.jpg"`.
+   * Precisa ser o objeto importado (ImageMetadata), não uma string de caminho:
+   * é o import que faz o astro:assets gerar AVIF/WebP no build.
+   *
+   * Sem art direction por breakpoint aqui — o <Picture> troca resolução, não
+   * enquadramento. Motivo medido, não preferência: gerar as variantes com
+   * getImage() a partir de uma prop faz o build emitir também o PNG original
+   * (~31 MB por foto) em dist/. Com um arquivo único por foto, como hoje, não
+   * há o que art-dirigir; quando houver cortes próprios por breakpoint, revisar.
+   */
+  imagem: ImageMetadata;
+}
+
+interface Props {
+  /** Rótulo acessível do carrossel. */
+  rotulo: string;
+  cards: CardCarrossel[];
+  class?: string;
+}
+
+const { rotulo, cards, class: classe = "" } = Astro.props;
+
+/**
+ * O card nunca passa de 327 CSS px, então 3× cobre tela retina.
+ * Gerar acima disso só engorda o build sem ninguém ver a diferença.
+ * `width` limita a imagem BASE: sem ele o fallback do <img> sai no tamanho
+ * original (4160px, ~1 MB).
+ */
+const LARGURAS = [327, 654, 981];
+const LARGURA_MAXIMA = 981;
+const SIZES = "min(80vw, 327px)";
+---
+
+<div
+  class={`relative ${classe}`}
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={rotulo}
+  data-carrossel-cards
+>
+  <div class="relative">
+    <ul
+      class="trilho flex snap-x snap-mandatory gap-4 overflow-x-auto px-[max(1rem,calc((100%-var(--slide-w))/2))] py-1"
+      data-trilho
+      tabindex="0"
+    >
+      {
+        cards.map((card, i) => (
+          <li
+            class="slide relative aspect-[327/600] h-auto w-[var(--slide-w)] flex-none snap-center rounded-card bg-roxo"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} de ${cards.length}`}
+          >
+            <div class="relative flex h-full flex-col justify-end p-6">
+              {/* texto primeiro no HTML, em fluxo normal */}
+              <div class="static z-[1] grid gap-6 text-creme">
+                {card.icone && (
+                  <span
+                    class="grid h-10 w-10 place-items-center rounded-full bg-creme/15 text-[1.25rem] leading-none"
+                    aria-hidden="true"
+                  >
+                    {card.icone}
+                  </span>
+                )}
+                <h3 class="font-display text-subtitulo font-semibold">{card.titulo}</h3>
+                <p class="text-corpo">{card.texto}</p>
+              </div>
+
+              {/* imagem depois no HTML, mas fora do fluxo e atrás do texto */}
+              <div class="slide__image absolute inset-0 overflow-hidden rounded-[inherit]">
+<Picture
+                  src={card.imagem}
+                  width={LARGURA_MAXIMA}
+                  widths={LARGURAS}
+                  sizes={SIZES}
+                  formats={["avif", "webp"]}
+                  fallbackFormat="webp"
+                  alt={card.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-cover object-[100%_50%]"
+                />
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <button type="button" class="seta left-2 sm:left-4" aria-label="Card anterior" data-anterior>
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"><path d="M15 5 8 12l7 7"></path></svg
+      >
+    </button>
+    <button type="button" class="seta right-2 sm:right-4" aria-label="Próximo card" data-proximo>
+      <svg
+        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg
+      >
+    </button>
+  </div>
+
+  {/*
+    Bolinhas só até md. Com `snap-start` no desktop cabem três cards de uma vez
+    e sobra pouca rolagem, então os últimos cards nunca chegam à posição ativa —
+    seriam bolinhas que não acendem nunca. As setas dão o retorno ali.
+    Mesma escolha do Carrossel.astro em Depoimentos e Professoras.
+  */}
+  <ul class="mt-4 flex justify-center gap-[2px] lg:hidden">
+    {
+      cards.map((card, i) => (
+        <li>
+          <button
+            type="button"
+            class="flex cursor-pointer items-center justify-center p-2"
+            aria-label={`Ir para o card ${i + 1}: ${card.titulo}`}
+            aria-current={i === 0 ? "true" : undefined}
+            data-ponto
+          >
+            <span
+              class:list={[
+                "block h-[7px] rounded-full bg-current transition-all duration-200",
+                i === 0 ? "w-[22px]" : "w-[7px] opacity-30",
+              ]}
+              aria-hidden="true"
+            />
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  /* Largura do slide: a conta do peek depende dela em dois lugares. */
+  [data-carrossel-cards] {
+    --slide-w: min(80vw, 327px);
+  }
+
+  /* Só o que utilitário não expressa bem. */
+  .trilho {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .trilho::-webkit-scrollbar {
+    display: none;
+  }
+
+  /*
+   * Desktop: alinhar pela esquerda em vez de centralizar.
+   *
+   * O peek centralizado exige `padding-inline` de meia viewport para o primeiro
+   * e o último card conseguirem chegar ao centro. Em 1280px isso são 436px, e
+   * em repouso vira um vazio embaixo do título — parece defeito, não respiro.
+   * A partir de lg os cards começam na mesma vertical do título e o peek passa
+   * a vir só da direita. Mobile e tablet seguem com o peek centralizado.
+   *
+   * O padding de 3rem casa com o `lg:px-12` do <Secao>, que a sangria negativa
+   * do carrossel cancela. Estas regras vencem os utilitários do Tailwind por
+   * não estarem em @layer, independente de especificidade.
+   */
+  @media (min-width: 64rem) {
+    .trilho {
+      padding-inline: 3rem;
+      /*
+       * Sem isto o snap ignora o padding e para em scrollLeft = 48, colando o
+       * primeiro card na borda da seção em vez de alinhá-lo com o título.
+       * O scroll-padding encolhe o snapport, e aí a posição de repouso é 0.
+       */
+      scroll-padding-inline: 3rem;
+    }
+    .trilho > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  /* Contraste do texto sobre a foto — sem text-shadow.
+     Fica entre a foto e o texto porque .slide__image tem z-index: auto
+     e o bloco de texto tem z-index: 1. */
+  .slide__image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--color-roxo) 85%, transparent) 0%,
+      color-mix(in srgb, var(--color-roxo) 55%, transparent) 35%,
+      transparent 65%
+    );
+  }
+
+  /*
+   * Setas só a partir de lg. No mobile a navegação é por swipe (com as
+   * bolinhas indicando a posição) e os botões ficariam por cima da foto do
+   * card. `display: none` também tira os botões da ordem de tabulação.
+   */
+  .seta {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    translate: 0 -50%;
+    display: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-creme);
+    color: var(--color-roxo);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--color-roxo) 30%, transparent);
+    cursor: pointer;
+    transition: opacity 150ms;
+  }
+  .seta:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  @media (min-width: 64rem) {
+    .seta {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // O CSS global já zera transições sob reduced-motion, mas não o scroll programático.
+  const comportamento = (): ScrollBehavior => (reduzido.matches ? "auto" : "smooth");
+
+  document.querySelectorAll<HTMLElement>("[data-carrossel-cards]").forEach((raiz) => {
+    const trilho = raiz.querySelector<HTMLElement>("[data-trilho]");
+    if (!trilho) return;
+
+    const slides = Array.from(trilho.children) as HTMLElement[];
+    const anterior = raiz.querySelector<HTMLButtonElement>("[data-anterior]");
+    const proximo = raiz.querySelector<HTMLButtonElement>("[data-proximo]");
+    const pontos = Array.from(raiz.querySelectorAll<HTMLButtonElement>("[data-ponto]"));
+    if (!slides.length) return;
+
+    /** Um slide + o gap, lido do layout real (nada hardcoded). */
+    const passo = () => {
+      const gap = parseFloat(getComputedStyle(trilho).columnGap) || 0;
+      return slides[0].offsetWidth + gap;
+    };
+
+    /**
+     * Slide ativo = o que tem o centro mais perto do centro do trilho.
+     *
+     * Não dá para usar `intersectionRatio` do IntersectionObserver aqui: o
+     * retângulo raiz é o PADDING box do trilho, e o padding do peek é largo o
+     * bastante para deixar os três slides 100% visíveis ao mesmo tempo em tela
+     * larga. Aí todos empatam em ratio 1 e a bolinha fica uma atrás.
+     * O ponto de referência acompanha o modo de snap: com `center` (mobile e
+     * tablet) é o centro do trilho; com `start` (desktop) é a borda de repouso,
+     * porque lá cabem três cards de uma vez e o "ativo" é o primeiro, não o do
+     * meio. Lido do CSS para não duplicar o breakpoint aqui em JS.
+     */
+    const indiceAtivo = () => {
+      const caixa = trilho.getBoundingClientRect();
+      const porInicio = getComputedStyle(slides[0]).scrollSnapAlign.includes("start");
+      const referencia = porInicio
+        ? caixa.left + parseFloat(getComputedStyle(trilho).paddingLeft)
+        : caixa.left + caixa.width / 2;
+
+      let indice = 0;
+      let menor = Infinity;
+      slides.forEach((slide, i) => {
+        const r = slide.getBoundingClientRect();
+        const posicao = porInicio ? r.left : r.left + r.width / 2;
+        const distancia = Math.abs(posicao - referencia);
+        if (distancia < menor) {
+          menor = distancia;
+          indice = i;
+        }
+      });
+      return indice;
+    };
+
+    anterior?.addEventListener("click", () =>
+      trilho.scrollBy({ left: -passo(), behavior: comportamento() })
+    );
+    proximo?.addEventListener("click", () =>
+      trilho.scrollBy({ left: passo(), behavior: comportamento() })
+    );
+
+    // `inline` segue o mesmo critério do indicador: centraliza no mobile,
+    // alinha pela esquerda no desktop. `block: "nearest"` para o clique não
+    // arrastar a página inteira na vertical.
+    pontos.forEach((ponto, i) =>
+      ponto.addEventListener("click", () => {
+        const porInicio = getComputedStyle(slides[0]).scrollSnapAlign.includes("start");
+        slides[i].scrollIntoView({
+          behavior: comportamento(),
+          inline: porInicio ? "start" : "center",
+          block: "nearest",
+        });
+      })
+    );
+
+    const marcar = (indice: number) => {
+      pontos.forEach((ponto, i) => {
+        const ativo = i === indice;
+        if (ativo) ponto.setAttribute("aria-current", "true");
+        else ponto.removeAttribute("aria-current");
+        const risco = ponto.firstElementChild;
+        risco?.classList.toggle("w-[22px]", ativo);
+        risco?.classList.toggle("w-[7px]", !ativo);
+        risco?.classList.toggle("opacity-30", !ativo);
+      });
+    };
+
+    // Sem loop: cada seta morre na ponta correspondente.
+    const atualizar = () => {
+      const maximo = trilho.scrollWidth - trilho.clientWidth;
+      if (anterior) anterior.disabled = trilho.scrollLeft <= 1;
+      if (proximo) proximo.disabled = trilho.scrollLeft >= maximo - 1;
+      marcar(indiceAtivo());
+    };
+
+    let agendado = 0;
+    trilho.addEventListener("scroll", () => {
+      if (agendado) return;
+      agendado = requestAnimationFrame(() => {
+        agendado = 0;
+        atualizar();
+      });
+    });
+    window.addEventListener("resize", atualizar);
+    atualizar();
+  });
+</script>

@@ -1,0 +1,28 @@
+---
+interface Props {
+  /** Fundo da secao — controla a alternância de ritmo da página. */
+  fundo?: "lavanda" | "creme" | "roxo" | "areia" | "branco";
+  id?: string;
+  /** Remove o padding vertical padrão (para seções que controlam o próprio espaço). */
+  semPadding?: boolean;
+  class?: string;
+}
+
+const { fundo = "creme", id, semPadding = false, class: classe = "" } = Astro.props;
+
+const fundos = {
+  lavanda: "bg-lavanda text-roxo",
+  creme: "bg-creme text-roxo",
+  roxo: "bg-roxo-fundo text-white",
+  areia: "bg-areia text-roxo",
+  branco: "bg-white text-roxo",
+};
+
+const padding = semPadding ? "" : "py-secao";
+---
+
+<section id={id} class={`${fundos[fundo]} ${padding} ${classe}`}>
+  <div class="mx-auto w-full max-w-[1200px] px-[22px] sm:px-8 lg:px-12">
+    <slot />
+  </div>
+</section>

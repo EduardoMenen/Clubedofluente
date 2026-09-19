@@ -1,0 +1,45 @@
+---
+interface Props {
+  variante?: "primario" | "secundario" | "claro";
+  href?: string;
+  type?: "button" | "submit";
+  externo?: boolean;
+  class?: string;
+}
+
+const {
+  variante = "primario",
+  href,
+  type = "button",
+  externo = true,
+  class: classe = "",
+} = Astro.props;
+
+const base =
+  "inline-flex items-center justify-center gap-2 rounded-pill px-6 text-center font-semibold " +
+  "min-h-[3.25rem] text-[1.0625rem] leading-tight transition-colors duration-150 cursor-pointer";
+
+const variantes = {
+  // roxo solido — CTA principal
+  primario: "bg-roxo text-white hover:bg-roxo-medio",
+  // branco com contorno roxo — CTA de apoio
+  secundario: "bg-white text-roxo border-2 border-roxo hover:bg-lavanda",
+  // usado sobre fundo roxo
+  claro: "bg-white text-roxo hover:bg-lavanda",
+};
+
+const classes = `${base} ${variantes[variante]} ${classe}`;
+const attrsExternos = externo ? { target: "_blank", rel: "noopener noreferrer" } : {};
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...attrsExternos}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes}>
+      <slot />
+    </button>
+  )
+}

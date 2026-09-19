@@ -1,0 +1,210 @@
+---
+/**
+ * Carrossel mobile com scroll-snap nativo (sem biblioteca).
+ * No desktop o trilho vira grade e os indicadores somem — a menos que
+ * `sempreCarrossel` esteja ligado, e aí ele segue trilho em toda largura.
+ */
+interface Props {
+  /** Rótulo acessível do trilho. */
+  rotulo: string;
+  /** Quantidade de itens — define os indicadores. */
+  itens: number;
+  /** Classes da grade aplicada a partir de lg. Ignorado com `sempreCarrossel`. */
+  gradeDesktop?: string;
+  /**
+   * Mantém o trilho rolando também no desktop, em vez de virar grade.
+   * Para seções com muitos cards, onde a grade quebraria em várias linhas.
+   * Nesse modo os indicadores continuam visíveis e aparecem setas — no mobile
+   * a navegação é por swipe, então elas só entram a partir de lg.
+   */
+  sempreCarrossel?: boolean;
+  class?: string;
+}
+const {
+  rotulo,
+  itens,
+  gradeDesktop = "lg:grid lg:grid-cols-3",
+  sempreCarrossel = false,
+  class: classe = "",
+} = Astro.props;
+---
+
+<div class={classe} data-raiz-carrossel>
+  <div class="relative">
+    <div
+      class:list={[
+        "trilho-carrossel gap-3 pb-1 lg:gap-5",
+        !sempreCarrossel && ["lg:overflow-visible", gradeDesktop, "lg:[&>*]:w-auto"],
+      ]}
+      data-carrossel
+      role="group"
+      aria-label={rotulo}
+      tabindex="0"
+    >
+      <slot />
+    </div>
+
+    {
+      sempreCarrossel && (
+        <>
+          <button
+            type="button"
+            class="seta -left-3"
+            aria-label="Card anterior"
+            data-anterior
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 5 8 12l7 7" />
+            </svg>
+          </button>
+          <button type="button" class="seta -right-3" aria-label="Próximo card" data-proximo>
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m9 5 7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )
+    }
+  </div>
+
+  <div
+    class:list={["mt-4 flex justify-center gap-[6px]", !sempreCarrossel && "lg:hidden"]}
+    data-indicadores
+    aria-hidden="true"
+  >
+    {
+      Array.from({ length: itens }).map((_, i) => (
+        <span
+          class:list={[
+            "h-[7px] rounded-full transition-all duration-200",
+            i === 0 ? "w-[22px] bg-current" : "w-[7px] bg-current opacity-30",
+          ]}
+        />
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  /*
+   * Setas só a partir de lg: no mobile a navegação é por swipe e os botões
+   * cobririam o card. `display: none` também os tira da ordem de tabulação.
+   */
+  .seta {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    translate: 0 -50%;
+    display: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-roxo);
+    color: var(--color-creme);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--color-roxo) 30%, transparent);
+    cursor: pointer;
+    transition: opacity 150ms;
+  }
+  .seta:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  @media (min-width: 64rem) {
+    .seta {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // O CSS global já zera transições sob reduced-motion, mas não o scroll programático.
+  const comportamento = (): ScrollBehavior => (reduzido.matches ? "auto" : "smooth");
+
+  document.querySelectorAll<HTMLElement>("[data-carrossel]").forEach((trilho) => {
+    const raiz = trilho.closest<HTMLElement>("[data-raiz-carrossel]");
+    const indicadores = raiz?.querySelectorAll<HTMLElement>("[data-indicadores] > span");
+    const cards = Array.from(trilho.children) as HTMLElement[];
+    if (!cards.length) return;
+
+    const marcar = (indice: number) => {
+      indicadores?.forEach((ponto, i) => {
+        const ativo = i === indice;
+        ponto.classList.toggle("w-[22px]", ativo);
+        ponto.classList.toggle("w-[7px]", !ativo);
+        ponto.classList.toggle("opacity-30", !ativo);
+      });
+    };
+
+    if (indicadores?.length) {
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          const visivel = entradas
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visivel) marcar(cards.indexOf(visivel.target as HTMLElement));
+        },
+        { root: trilho, threshold: [0.5, 0.75] }
+      );
+      cards.forEach((card) => observador.observe(card));
+    }
+
+    // Setas: só existem no modo `sempreCarrossel`.
+    const anterior = raiz?.querySelector<HTMLButtonElement>("[data-anterior]");
+    const proximo = raiz?.querySelector<HTMLButtonElement>("[data-proximo]");
+    if (!anterior && !proximo) return;
+
+    /** Um card + o gap, lido do layout real (nada hardcoded). */
+    const passo = () => {
+      const gap = parseFloat(getComputedStyle(trilho).columnGap) || 0;
+      return cards[0].offsetWidth + gap;
+    };
+
+    anterior?.addEventListener("click", () =>
+      trilho.scrollBy({ left: -passo(), behavior: comportamento() })
+    );
+    proximo?.addEventListener("click", () =>
+      trilho.scrollBy({ left: passo(), behavior: comportamento() })
+    );
+
+    // Sem loop: cada seta morre na ponta correspondente.
+    const atualizar = () => {
+      const maximo = trilho.scrollWidth - trilho.clientWidth;
+      if (anterior) anterior.disabled = trilho.scrollLeft <= 1;
+      if (proximo) proximo.disabled = trilho.scrollLeft >= maximo - 1;
+    };
+
+    let agendado = 0;
+    trilho.addEventListener("scroll", () => {
+      if (agendado) return;
+      agendado = requestAnimationFrame(() => {
+        agendado = 0;
+        atualizar();
+      });
+    });
+    window.addEventListener("resize", atualizar);
+    atualizar();
+  });
+</script>

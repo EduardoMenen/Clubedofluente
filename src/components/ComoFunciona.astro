@@ -1,0 +1,54 @@
+---
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+
+const passos = [
+  {
+    numero: "01",
+    titulo: "Você chama no WhatsApp",
+    texto: "Sem formulário longo, sem robô. Conversa direta com a equipe.",
+  },
+  {
+    numero: "02",
+    titulo: "A gente entende seu objetivo",
+    texto: "Idioma, nível atual, para que você precisa e quando pode estudar.",
+  },
+  {
+    numero: "03",
+    titulo: "Aula experimental gratuita",
+    texto: "30 minutos ao vivo com uma professora, sem compromisso.",
+  },
+  {
+    numero: "04",
+    titulo: "Montamos seu plano",
+    texto: "Modalidade, horário fixo e início das aulas recorrentes.",
+  },
+];
+---
+
+<Secao id="como-funciona" fundo="lavanda">
+  <TituloSecao inicio="Do primeiro oi até" enfase="a sua primeira aula">
+    <Fragment slot="apoio">
+      O fluxo abaixo será ajustado ao processo atual do Clube.
+    </Fragment>
+  </TituloSecao>
+
+  <ol class="mt-9 grid gap-3 lg:mt-12 lg:grid-cols-4 lg:gap-5">
+    {
+      passos.map((passo) => (
+        <li class="flex gap-4 rounded-card bg-white p-4 lg:flex-col lg:gap-3 lg:p-6">
+          <span
+            class="flex h-8 min-w-[2.1875rem] shrink-0 items-center justify-center rounded-[0.625rem] bg-roxo px-2 font-sans text-apoio font-semibold text-white"
+            aria-hidden="true"
+          >
+            {passo.numero}
+          </span>
+          <div>
+            <h3 class="font-sans text-corpo font-semibold leading-snug text-roxo">{passo.titulo}</h3>
+            <p class="mt-1 text-apoio text-cinza">{passo.texto}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</Secao>

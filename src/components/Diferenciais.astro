@@ -1,0 +1,66 @@
+---
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+import CarrosselCards, { type CardCarrossel } from "./CarrosselCards.astro";
+import foto4700 from "../assets/IMG_4700.jpg";
+import foto4702 from "../assets/IMG_4702.jpg";
+import foto4703 from "../assets/IMG_4703.jpg";
+import foto4705 from "../assets/IMG_4705.jpg";
+import foto4708 from "../assets/IMG_4708.jpg";
+import foto4710 from "../assets/IMG_4710.jpg";
+
+const diferenciais: CardCarrossel[] = [
+  {
+    titulo: "Uma professora que conhece você",
+    texto:
+      "Acompanha seu processo, entende suas dúvidas e percebe onde você precisa de mais atenção.",
+    alt: "Mulher de cabelos longos sorrindo, apoiada sobre um cubo branco em estúdio de fundo cinza.",
+    imagem: foto4705,
+  },
+  {
+    titulo: "Aulas que têm a ver com você",
+    texto: "Músicas, jogos, cultura pop e assuntos do seu interesse também entram em aula.",
+    alt: "Mulher sorrindo enquanto usa um tablet, em pé.",
+    imagem: foto4703,
+  },
+  {
+    titulo: "Acompanhamento além da aula",
+    texto: "Materiais e atividades ajudam a continuar praticando durante a semana.",
+    alt: "Mulher sorrindo, segurando um tablet e uma caneta digital.",
+    imagem: foto4710,
+  },
+  {
+    titulo: "Espaço para perguntar e tentar",
+    texto: "Dúvidas fazem parte do processo e errar também.",
+    alt: "Mulher rindo enquanto olha para a tela de um tablet que segura com as duas mãos.",
+    imagem: foto4702,
+  },
+  {
+    titulo: "Flexibilidade na rotina",
+    texto:
+      "Imprevistos acontecem. Quando for necessário, a aula pode ser reorganizada conforme a disponibilidade de ambos.",
+    alt: "Mulher de cabelos longos olhando para cima, em estúdio de fundo cinza.",
+    imagem: foto4700,
+  },
+  {
+    titulo: "Conteúdo que acompanha seu avanço",
+    texto: "As próximas aulas consideram o que você já aprendeu e o que ainda precisa desenvolver.",
+    alt: "Mulher sorrindo, apoiada com os braços cruzados sobre um cubo branco.",
+    imagem: foto4708,
+  },
+];
+---
+
+<Secao id="diferenciais" fundo="creme">
+  <TituloSecao inicio="Por que o clube?" enfase="O que faz a diferença aula após aula" />
+
+  {/*
+    A sangria negativa casa com o padding do <Secao> em cada breakpoint, para o
+    peek dos cards vizinhos cortar na borda da seção e não a 22px dela.
+  */}
+  <CarrosselCards
+    rotulo="Diferenciais do Clube do Fluente"
+    cards={diferenciais}
+    class="mt-9 -mx-[22px] sm:-mx-8 lg:mt-12 lg:-mx-12"
+  />
+</Secao>

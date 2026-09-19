@@ -1,0 +1,41 @@
+---
+/**
+ * Título de seção no padrão do design: display serif, com a parte final
+ * em itálico, seguido de um texto de apoio opcional (slot "apoio").
+ */
+interface Props {
+  /** Trecho em peso normal. */
+  inicio: string;
+  /** Trecho enfatizado em itálico (padrão visual do Clube). */
+  enfase?: string;
+  /** Classe de cor do trecho inicial (padrão: herda da seção). */
+  classeInicio?: string;
+  /** Classe de cor do trecho em itálico (padrão: herda da seção). */
+  classeEnfase?: string;
+  /** Alinha ao centro (usado em seções de fundo cheio). */
+  centro?: boolean;
+  class?: string;
+}
+const {
+  inicio,
+  enfase,
+  classeInicio = "",
+  classeEnfase = "",
+  centro = false,
+  class: classe = "",
+} = Astro.props;
+const alinhamento = centro ? "text-center mx-auto" : "";
+---
+
+<div class={`${alinhamento} ${classe}`}>
+  <h2 class="max-w-[20ch] text-titulo font-semibold" class:list={[centro && "mx-auto"]}>
+    <span class={classeInicio}>{inicio}</span>{enfase && <> <em class={`italic ${classeEnfase}`}>{enfase}</em></>}
+  </h2>
+  {
+    Astro.slots.has("apoio") && (
+      <p class="mt-4 max-w-[52ch] text-corpo opacity-90" class:list={[centro && "mx-auto"]}>
+        <slot name="apoio" />
+      </p>
+    )
+  }
+</div>

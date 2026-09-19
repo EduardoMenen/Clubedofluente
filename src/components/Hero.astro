@@ -1,0 +1,36 @@
+---
+import Secao from "./Secao.astro";
+import Botao from "./Botao.astro";
+import FotoPlaceholder from "./FotoPlaceholder.astro";
+import { LINKS } from "../config";
+---
+
+<Secao id="topo" fundo="lavanda" class="pt-8 lg:pt-secao">
+  <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div>
+      <h1 class="text-display font-semibold text-roxo">
+        Aprenda inglês e espanhol <em class="italic">conversando desde a primeira aula.</em>
+      </h1>
+
+      <p class="mt-5 max-w-[46ch] text-corpo text-cinza">
+        Aulas particulares de idiomas, feitas sob medida para o seu objetivo: trabalho, viagem ou
+        realização pessoal.
+      </p>
+
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <Botao href={LINKS.heroConversa} class="w-full sm:w-auto sm:px-8">
+          Falar no WhatsApp
+        </Botao>
+        <Botao href={LINKS.aulaGratis} variante="secundario" class="w-full sm:w-auto sm:px-8">
+          Aula experimental gratuita
+        </Botao>
+      </div>
+    </div>
+
+    <FotoPlaceholder
+      proporcao="4/3"
+      rotulo="Aluna em aula online pelo notebook, sorrindo"
+      class="w-full"
+    />
+  </div>
+</Secao>

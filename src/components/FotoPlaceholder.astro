@@ -1,0 +1,21 @@
+---
+/**
+ * Placeholder proporcional para as fotos que ainda não chegaram.
+ * Quando a imagem real existir, trocar este componente por <Image />
+ * mantendo a mesma proporção.
+ */
+interface Props {
+  proporcao?: "4/3" | "3/4" | "1/1";
+  rotulo: string;
+  class?: string;
+}
+const { proporcao = "4/3", rotulo, class: classe = "" } = Astro.props;
+const proporcoes = { "4/3": "aspect-[4/3]", "3/4": "aspect-[3/4]", "1/1": "aspect-square" };
+---
+
+<div
+  class={`${proporcoes[proporcao]} flex flex-col items-center justify-center gap-1 rounded-card border-2 border-dashed border-roxo-claro/60 bg-lavanda-forte px-4 text-center ${classe}`}
+>
+  <span class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-roxo/70">Foto</span>
+  <span class="text-miudo text-roxo/60">{rotulo}</span>
+</div>

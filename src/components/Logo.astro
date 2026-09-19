@@ -1,0 +1,16 @@
+---
+interface Props {
+  /** "escuro" para fundos claros, "claro" para fundo roxo. */
+  tom?: "escuro" | "claro";
+  class?: string;
+}
+const { tom = "escuro", class: classe = "" } = Astro.props;
+const corFluente = tom === "escuro" ? "text-roxo" : "text-white";
+---
+
+<span class={`block leading-none ${classe}`}>
+  <span class="block font-display text-[0.8125rem] italic text-roxo-claro">clube do</span>
+  <span class={`block font-display text-[1.5rem] font-semibold tracking-tight ${corFluente}`}>
+    Fluente
+  </span>
+</span>

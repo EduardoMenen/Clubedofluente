@@ -1,0 +1,51 @@
+---
+import Secao from "./Secao.astro";
+import Carrossel from "./Carrossel.astro";
+
+/** Depoimentos como os alunos escreveram — só o primeiro nome acompanha. */
+const depoimentos = [
+  {
+    texto:
+      "Minha experiência tem sido extraordinária, percebo evoluções diariamente. Agora me sinto confiante em processos seletivos que exigem inglês!",
+    nome: "Laura",
+  },
+  {
+    texto:
+      "O que mais gosto é da organização e da continuidade das aulas. A teacher sempre retoma um pouco o que vimos anteriormente e, a partir dali, dá sequência ao conteúdo. Isso ajuda muito a fixar o aprendizado e acompanhar a evolução. Percebi uma grande evolução em pouco espaço de tempo.",
+    nome: "Kathian",
+  },
+  {
+    texto:
+      "Estou gostando muito das aulas, a metodologia é incrível e eu já estou percebendo uma evolução, estou ficando muito feliz com o resultado!",
+    nome: "Paula",
+  },
+];
+---
+
+<Secao id="depoimentos" fundo="lavanda">
+  <h2 class="text-titulo font-semibold text-roxo">Quem já está falando</h2>
+
+  <Carrossel
+    rotulo="Depoimentos de alunos"
+    itens={depoimentos.length}
+    gradeDesktop="lg:grid lg:grid-cols-3"
+    class="mt-8 text-roxo"
+  >
+    {
+      depoimentos.map((depoimento) => (
+        <figure class="flex w-[304px] flex-col rounded-card bg-white p-[18px] lg:p-8">
+          <span
+            class="font-display text-[2.5rem] leading-none text-roxo-claro"
+            aria-hidden="true"
+          >
+            &ldquo;
+          </span>
+          <blockquote class="mt-2 flex-1 text-apoio text-cinza lg:text-corpo">
+            {depoimento.texto}
+          </blockquote>
+          <figcaption class="mt-5 text-corpo font-semibold text-roxo">{depoimento.nome}</figcaption>
+        </figure>
+      ))
+    }
+  </Carrossel>
+</Secao>

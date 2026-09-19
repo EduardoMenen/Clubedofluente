@@ -1,0 +1,46 @@
+---
+import Logo from "./Logo.astro";
+import { LINKS, SITE } from "../config";
+
+const ano = new Date().getFullYear();
+---
+
+<footer class="bg-roxo text-white">
+  <div class="mx-auto w-full max-w-[1200px] px-[22px] py-10 sm:px-8 lg:px-12 lg:py-14">
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-16">
+      <div>
+        <Logo tom="claro" />
+        <p class="mt-4 max-w-[42ch] text-apoio text-white/75">
+          Escola de idiomas online. Inglês e espanhol, ao vivo, no seu ritmo.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 lg:gap-3">
+        <a
+          href={LINKS.heroConversa}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex min-h-[2.75rem] items-center justify-center rounded-pill bg-white/10 px-4 text-corpo font-medium text-white transition-colors hover:bg-white/20"
+        >
+          WhatsApp
+        </a>
+        <a
+          href={LINKS.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex min-h-[2.75rem] items-center justify-center rounded-pill bg-white/10 px-4 text-corpo font-medium text-white transition-colors hover:bg-white/20"
+        >
+          Instagram
+        </a>
+      </div>
+    </div>
+
+    <p class="mt-8 text-miudo text-white/60 lg:mt-12">
+      <a href={`mailto:${SITE.email}`} class="hover:text-white">{SITE.email}</a>
+      <span aria-hidden="true"> · </span>
+      <a href="/privacidade" class="hover:text-white">Aviso de privacidade</a>
+      <span aria-hidden="true"> · </span>
+      © {ano} {SITE.nome}
+    </p>
+  </div>
+</footer>

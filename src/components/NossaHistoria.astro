@@ -1,0 +1,52 @@
+---
+import { Picture } from "astro:assets";
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+import amanda from "../assets/amanda.jpg";
+
+/**
+ * A foto ocupa no máximo 460 CSS px; 2× cobre tela retina.
+ * `width` limita a imagem BASE: sem ele o fallback do <img> sai no tamanho
+ * original (4160px, ~1 MB). Mesmo cuidado do CarrosselCards.
+ */
+const LARGURAS = [460, 920];
+const LARGURA_MAXIMA = 920;
+const SIZES = "(min-width: 64rem) 460px, calc(100vw - 44px)";
+---
+
+<Secao id="historia" fundo="creme">
+  <div class="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <div class="lg:order-2">
+      <TituloSecao inicio="Tudo começou com" enfase="uma mala e um sonho" />
+
+      <p class="mt-6 text-corpo text-cinza">
+        O Clube nasceu da história da Amanda com o inglês. Depois de anos estudando o idioma e
+        sonhando em morar fora, ela passou um ano nos Estados Unidos, onde viveu o inglês de perto
+        e começou a dar aulas particulares online. Quando voltou ao Brasil, trouxe na bagagem a
+        vontade de tornar esse aprendizado mais acessível, leve e conectado ao idioma que realmente
+        acontece fora dos livros.
+      </p>
+
+      <p class="mt-4 text-corpo text-cinza">
+        O que começou com algumas aulas foi crescendo, ganhou novas professoras, novos idiomas e
+        uma equipe inteira. Hoje, o Clube existe para ajudar mais pessoas a colocar um novo idioma
+        na vida, seja para viajar, trabalhar, morar fora ou simplesmente realizar um sonho antigo.
+      </p>
+    </div>
+
+    {/* O retrato é 2/3; o corte 3/4 centralizado tira só as sobras de fundo
+        cinza em cima e embaixo, sem cortar a figura. */}
+    <Picture
+      src={amanda}
+      width={LARGURA_MAXIMA}
+      widths={LARGURAS}
+      sizes={SIZES}
+      formats={["avif", "webp"]}
+      fallbackFormat="webp"
+      alt="Amanda, fundadora do Clube do Fluente, sorrindo de perfil em estúdio de fundo cinza."
+      loading="lazy"
+      decoding="async"
+      class="aspect-[3/4] w-full max-w-[460px] rounded-card object-cover lg:order-1"
+    />
+  </div>
+</Secao>

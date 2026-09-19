@@ -1,0 +1,197 @@
+---
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+import Botao from "./Botao.astro";
+
+const campos = [
+  { id: "nome", rotulo: "Nome", tipo: "text", placeholder: "Como podemos te chamar?", autocomplete: "name" },
+  { id: "email", rotulo: "E-mail", tipo: "email", placeholder: "seuemail@email.com", autocomplete: "email" },
+  { id: "telefone", rotulo: "Telefone / WhatsApp", tipo: "tel", placeholder: "(54) 90000-0000", autocomplete: "tel" },
+];
+
+const idiomas = ["Inglês", "Espanhol", "Os dois"];
+---
+
+<Secao id="contato" fundo="roxo">
+  <TituloSecao
+    inicio="Prefere que a gente"
+    enfase="chame você?"
+    classeEnfase="text-areia"
+  >
+    <Fragment slot="apoio">
+      Preencha em 1 minuto. A equipe responde no mesmo dia com os horários disponíveis.
+    </Fragment>
+  </TituloSecao>
+
+  <div class="mt-8 lg:mt-12 lg:max-w-[620px]">
+    <form id="form-lead" class="rounded-card bg-creme p-[18px] lg:p-8" novalidate>
+      <div class="flex flex-col gap-5">
+        {
+          campos.map((campo) => (
+            <div>
+              <label for={campo.id} class="block text-apoio font-medium text-roxo">
+                {campo.rotulo}
+              </label>
+              <input
+                id={campo.id}
+                name={campo.id}
+                type={campo.tipo}
+                placeholder={campo.placeholder}
+                autocomplete={campo.autocomplete}
+                required
+                class="mt-[6px] block h-12 w-full rounded-caixa border border-roxo/20 bg-white px-4 text-corpo text-roxo placeholder:text-cinza-claro focus:border-roxo focus:outline-none"
+              />
+              <p class="mt-[6px] hidden text-miudo text-red-700" data-erro={campo.id} />
+            </div>
+          ))
+        }
+
+        <fieldset>
+          <legend class="text-apoio font-medium text-roxo">Idioma de interesse</legend>
+          <div class="mt-[6px] flex flex-wrap gap-2">
+            {
+              idiomas.map((idioma, i) => (
+                <label class="cursor-pointer">
+                  <input
+                    type="radio"
+                    name="idioma"
+                    value={idioma}
+                    checked={i === 0}
+                    class="peer sr-only"
+                  />
+                  <span class="block rounded-pill border border-roxo/20 bg-white px-[14px] py-[9px] text-apoio text-roxo transition-colors peer-checked:border-roxo peer-checked:bg-roxo peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-roxo-claro">
+                    {idioma}
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="horarios" class="block text-apoio font-medium text-roxo">
+            Dias e horários que funcionam pra você
+          </label>
+          <input
+            id="horarios"
+            name="horarios"
+            type="text"
+            placeholder="Ex.: terças e quintas, à noite"
+            required
+            class="mt-[6px] block h-12 w-full rounded-caixa border border-roxo/20 bg-white px-4 text-corpo text-roxo placeholder:text-cinza-claro focus:border-roxo focus:outline-none"
+          />
+          <p class="mt-[6px] hidden text-miudo text-red-700" data-erro="horarios"></p>
+        </div>
+      </div>
+
+      <Botao type="submit" class="mt-6 w-full">
+        <span data-rotulo-botao>Enviar e receber os horários</span>
+      </Botao>
+
+      <p class="mt-4 text-center text-miudo text-cinza">
+        Seus dados vão direto para a equipe do Clube (Pipefy). Não enviamos spam.
+      </p>
+
+      <p
+        class="mt-4 hidden rounded-caixa bg-red-50 px-4 py-3 text-apoio text-red-800"
+        data-erro-geral
+        role="alert"
+      >
+      </p>
+    </form>
+
+    <div
+      id="form-sucesso"
+      hidden
+      class="rounded-card bg-creme p-8 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <span
+        class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-lavanda text-[1.75rem] text-roxo"
+        aria-hidden="true"
+      >
+        ✓
+      </span>
+      <h3 class="mt-4 text-subtitulo font-semibold text-roxo">Deu certo!</h3>
+      <p class="mx-auto mt-2 max-w-[42ch] text-apoio text-cinza" data-mensagem-sucesso></p>
+    </div>
+  </div>
+</Secao>
+
+<script>
+  import { enviarLead, type Lead } from "../lib/enviarLead";
+
+  const form = document.getElementById("form-lead") as HTMLFormElement | null;
+  const sucesso = document.getElementById("form-sucesso");
+
+  if (form && sucesso) {
+    const botao = form.querySelector("button[type=submit]") as HTMLButtonElement;
+    const rotulo = form.querySelector("[data-rotulo-botao]") as HTMLElement;
+    const erroGeral = form.querySelector("[data-erro-geral]") as HTMLElement;
+
+    const mostrarErro = (campo: string, mensagem: string) => {
+      const alvo = form.querySelector(`[data-erro="${campo}"]`) as HTMLElement | null;
+      if (!alvo) return;
+      alvo.textContent = mensagem;
+      alvo.classList.toggle("hidden", !mensagem);
+      form.querySelector(`#${campo}`)?.setAttribute("aria-invalid", mensagem ? "true" : "false");
+    };
+
+    const validar = (dados: Record<string, string>) => {
+      const erros: Record<string, string> = {};
+      if (dados.nome.trim().length < 2) erros.nome = "Conta pra gente como te chamar.";
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dados.email)) erros.email = "Confere o e-mail, parece incompleto.";
+      if (dados.telefone.replace(/\D/g, "").length < 10) erros.telefone = "Inclua o DDD e o número.";
+      if (dados.horarios.trim().length < 3) erros.horarios = "Mesmo que aproximado, ajuda muito.";
+      return erros;
+    };
+
+    form.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      erroGeral.classList.add("hidden");
+
+      const formulario = new FormData(form);
+      const dados = {
+        nome: String(formulario.get("nome") ?? ""),
+        email: String(formulario.get("email") ?? ""),
+        telefone: String(formulario.get("telefone") ?? ""),
+        idioma: String(formulario.get("idioma") ?? ""),
+        horarios: String(formulario.get("horarios") ?? ""),
+      };
+
+      ["nome", "email", "telefone", "horarios"].forEach((campo) => mostrarErro(campo, ""));
+
+      const erros = validar(dados);
+      if (Object.keys(erros).length) {
+        Object.entries(erros).forEach(([campo, mensagem]) => mostrarErro(campo, mensagem));
+        (form.querySelector(`#${Object.keys(erros)[0]}`) as HTMLElement)?.focus();
+        return;
+      }
+
+      botao.disabled = true;
+      botao.classList.add("opacity-70");
+      rotulo.textContent = "Enviando...";
+
+      try {
+        const resultado = await enviarLead(dados as Lead);
+        if (!resultado.ok) throw new Error(resultado.mensagem);
+
+        const mensagem = sucesso.querySelector("[data-mensagem-sucesso]") as HTMLElement;
+        mensagem.textContent = resultado.mensagem;
+        form.hidden = true;
+        sucesso.hidden = false;
+        sucesso.scrollIntoView({ behavior: "smooth", block: "center" });
+      } catch (erro) {
+        erroGeral.textContent =
+          "Não conseguimos enviar agora. Tente de novo ou chame a gente no WhatsApp.";
+        erroGeral.classList.remove("hidden");
+        console.error(erro);
+      } finally {
+        botao.disabled = false;
+        botao.classList.remove("opacity-70");
+        rotulo.textContent = "Enviar e receber os horários";
+      }
+    });
+  }
+</script>

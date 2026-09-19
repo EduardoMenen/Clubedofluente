@@ -1,0 +1,39 @@
+---
+import "../styles/global.css";
+import { SITE } from "../config";
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+}
+
+const { titulo = SITE.titulo, descricao = SITE.descricao } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#52198a" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={SITE.nome} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-caixa focus:bg-roxo focus:px-4 focus:py-2 focus:text-white"
+    >
+      Pular para o conteúdo
+    </a>
+    <slot />
+  </body>
+</html>

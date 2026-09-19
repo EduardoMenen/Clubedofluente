@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* Fontes locais (sem depender do Google Fonts em runtime) */
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+@import "@fontsource-variable/inter";
+
+/* ------------------------------------------------------------------
+   Design tokens — extraidos do prototipo Figma "Clube do Fluente"
+   Alterar aqui propaga para a pagina inteira.
+   ------------------------------------------------------------------ */
+@theme {
+  /* Cores */
+  --color-roxo: #52198a;
+  /* fundo de secao (nao usar em texto/botao) */
+  --color-roxo-fundo: #8a6ae5;
+  --color-roxo-medio: #6b2cae;
+  --color-roxo-claro: #a98eee;
+  --color-lavanda: #f1e9fe;
+  --color-lavanda-forte: #e4d8fb;
+  --color-creme: #fffbf4;
+  --color-areia: #efe0a5;
+  --color-cinza: #6b6377;
+  --color-cinza-claro: #8d8599;
+
+  /* Tipografia */
+  --font-display: "Playfair Display Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Escala fluida: mobile -> desktop sem breakpoint manual */
+  --text-display: clamp(2.125rem, 1.55rem + 2.6vw, 3.75rem);
+  --text-display--line-height: 1.12;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-titulo: clamp(1.75rem, 1.45rem + 1.35vw, 2.75rem);
+  --text-titulo--line-height: 1.18;
+  --text-titulo--letter-spacing: -0.015em;
+
+  --text-subtitulo: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --text-subtitulo--line-height: 1.25;
+
+  --text-corpo: clamp(1.0625rem, 1.02rem + 0.2vw, 1.125rem);
+  --text-corpo--line-height: 1.6;
+
+  --text-apoio: 0.9375rem;
+  --text-apoio--line-height: 1.55;
+
+  --text-miudo: 0.8125rem;
+  --text-miudo--line-height: 1.5;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.12em;
+
+  /* Raios */
+  --radius-card: 1rem;
+  --radius-caixa: 0.875rem;
+  --radius-pill: 999px;
+
+  /* Ritmo vertical das secoes */
+  --spacing-secao: clamp(2rem, 1.5rem + 2.2vw, 4rem);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* compensa o header sticky ao pular por ancora */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-corpo);
+    line-height: 1.6;
+    color: var(--color-roxo);
+    background-color: var(--color-creme);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-roxo-claro);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Carrossel mobile: scroll-snap nativo, sem biblioteca */
+@utility trilho-carrossel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar { display: none; }
+  & > * { scroll-snap-align: start; flex: none; }
+}

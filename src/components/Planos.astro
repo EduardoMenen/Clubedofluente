@@ -1,0 +1,114 @@
+---
+import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
+import Botao from "./Botao.astro";
+import { LINKS } from "../config";
+
+const modalidades = [
+  {
+    nome: "Individual",
+    selo: "MAIS PROCURADA",
+    etiqueta: null,
+    linha: "Só você e a professora",
+    texto: "Ritmo, horário e conteúdo 100% seus. A modalidade mais procurada.",
+    destaque: true,
+  },
+  {
+    nome: "Dupla",
+    selo: null,
+    etiqueta: "Você + 1 pessoa",
+    linha: null,
+    texto: "Ideal para casais, amigos ou colegas de trabalho no mesmo nível.",
+    destaque: false,
+  },
+  {
+    nome: "Trio",
+    selo: null,
+    etiqueta: "Você + 2 pessoas",
+    linha: null,
+    texto: "Mais conversação entre alunos, com custo dividido em três.",
+    destaque: false,
+  },
+  {
+    nome: "Turma",
+    selo: null,
+    etiqueta: "Grupo reduzido",
+    linha: null,
+    texto: "Turmas em menor escala, abertas conforme a procura.",
+    destaque: false,
+  },
+];
+---
+
+<Secao id="planos" fundo="roxo">
+  <TituloSecao inicio="Escolha como você" enfase="quer estudar">
+    <Fragment slot="apoio">
+      Nas modalidades compartilhadas o custo é dividido entre os participantes.
+    </Fragment>
+  </TituloSecao>
+
+  <div class="mt-9 grid gap-3 lg:mt-12 lg:grid-cols-2 lg:gap-5">
+    {
+      modalidades.map((modalidade) => (
+        <article
+          class:list={[
+            "rounded-card p-[18px] lg:p-6",
+            modalidade.destaque ? "bg-areia text-roxo" : "bg-roxo-medio text-white",
+          ]}
+        >
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-subtitulo font-semibold leading-none">{modalidade.nome}</h3>
+            {modalidade.selo && (
+              <span class="rounded-pill bg-roxo px-[10px] py-[5px] text-eyebrow font-semibold uppercase tracking-[0.12em] text-white">
+                {modalidade.selo}
+              </span>
+            )}
+            {modalidade.etiqueta && (
+              <span class="text-apoio text-white/75">{modalidade.etiqueta}</span>
+            )}
+          </div>
+
+          {modalidade.linha && (
+            <p class="mt-[13px] text-apoio font-semibold">{modalidade.linha}</p>
+          )}
+
+          <p
+            class:list={[
+              "mt-[13px] text-apoio",
+              modalidade.destaque ? "text-roxo/80" : "text-white/80",
+            ]}
+          >
+            {modalidade.texto}
+          </p>
+        </article>
+      ))
+    }
+  </div>
+
+  <!-- Faixa de investimento -->
+  <div class="mt-3 grid gap-3 lg:mt-5 lg:grid-cols-[1.4fr_1fr] lg:gap-5">
+    <div class="rounded-card bg-creme p-5 text-roxo lg:p-8">
+      <p class="text-apoio font-medium text-roxo/75">Planos a partir de</p>
+      <p class="mt-1 font-display text-[2.125rem] font-semibold leading-none lg:text-[2.75rem]">
+        R$ 180 <span class="text-subtitulo font-sans font-medium text-roxo/70">/mês</span>
+      </p>
+      <p class="mt-3 max-w-[46ch] text-apoio text-cinza">
+        O valor exato depende da modalidade e da frequência. A gente calcula com você no WhatsApp.
+      </p>
+      <Botao href={LINKS.consultarValor} class="mt-5 w-full sm:w-auto sm:px-8">
+        Consultar meu valor no WhatsApp
+      </Botao>
+    </div>
+
+    <!-- Secundario: avulsas e intensivos -->
+    <div class="rounded-card border border-white/25 bg-roxo-medio p-5 text-white lg:p-8">
+      <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-white/70">
+        Também é possível
+      </p>
+      <p class="mt-[6px] text-apoio text-white/85">
+        Aulas avulsas para um objetivo específico (uma entrevista, uma viagem) e cursos intensivos
+        de curta duração. Pergunte no WhatsApp.
+      </p>
+    </div>
+  </div>
+</Secao>
