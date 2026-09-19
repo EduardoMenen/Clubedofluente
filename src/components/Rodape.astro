@@ -38,7 +38,7 @@ const ano = new Date().getFullYear();
     <p class="mt-8 text-miudo text-white/60 lg:mt-12">
       <a href={`mailto:${SITE.email}`} class="hover:text-white">{SITE.email}</a>
       <span aria-hidden="true"> · </span>
-      <a href="/privacidade" class="hover:text-white">Aviso de privacidade</a>
+      <a href={`${import.meta.env.BASE_URL}privacidade`} class="hover:text-white">Aviso de privacidade</a>
       <span aria-hidden="true"> · </span>
       © {ano} {SITE.nome}
     </p>

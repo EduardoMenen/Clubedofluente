@@ -8,6 +8,9 @@ interface Props {
 }
 
 const { titulo = SITE.titulo, descricao = SITE.descricao } = Astro.props;
+
+/** Prefixo da subpasta no GitHub Pages ("/" quando o site estiver na raiz). */
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -17,8 +20,12 @@ const { titulo = SITE.titulo, descricao = SITE.descricao } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titulo}</title>
     <meta name="description" content={descricao} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <meta name="theme-color" content="#52198a" />
+
+    {/* Prévia para aprovação: fora do Google até o site ser o definitivo.
+        Remover junto com o `base` quando entrar no domínio próprio. */}
+    <meta name="robots" content="noindex, nofollow" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />

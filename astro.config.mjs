@@ -5,9 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // Domínio final do site — usado pelo Astro para montar URLs absolutas.
-  // No GitHub Pages ele é servido na raiz do domínio, então não há `base`.
-  site: 'https://clubedofluente.com.br',
+  // Prévia no GitHub Pages: o site é servido dentro de uma subpasta com o
+  // nome do repositório, e `base` é o que faz links e assets apontarem certo.
+  // Ao trocar por um domínio próprio, apagar `base` e definir
+  // `site: 'https://o-dominio.com.br'`.
+  base: '/clube_fluente/',
 
   vite: {
     plugins: [tailwindcss()]
