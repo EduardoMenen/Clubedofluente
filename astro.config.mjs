@@ -9,7 +9,7 @@ export default defineConfig({
   // nome do repositório, e `base` é o que faz links e assets apontarem certo.
   // Ao trocar por um domínio próprio, apagar `base` e definir
   // `site: 'https://o-dominio.com.br'`.
-  base: '/clube_fluente/',
+  base: '/Clubedofluente/',
 
   vite: {
     plugins: [tailwindcss()]
