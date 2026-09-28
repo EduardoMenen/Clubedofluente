@@ -22,6 +22,8 @@
   --color-areia: #efe0a5;
   --color-cinza: #6b6377;
   --color-cinza-claro: #8d8599;
+  /* estrelas dos depoimentos (o areia é claro demais sobre branco) */
+  --color-ouro: #e2a93b;
 
   /* Tipografia */
   --font-display: "Playfair Display Variable", Georgia, "Times New Roman", serif;
@@ -56,6 +58,13 @@
   --radius-card: 1rem;
   --radius-caixa: 0.875rem;
   --radius-pill: 999px;
+
+  /* Sombras tingidas de roxo: sombra cinza "suja" os fundos pastel */
+  --shadow-card:
+    0 10px 30px -12px color-mix(in srgb, var(--color-roxo) 22%, transparent),
+    0 2px 6px -2px color-mix(in srgb, var(--color-roxo) 8%, transparent);
+  /* Sobre fundo roxo a sombra clara some; esta é mais funda e mais escura */
+  --shadow-card-escuro: 0 18px 40px -18px color-mix(in srgb, #280848 60%, transparent);
 
   /* Ritmo vertical das secoes */
   --spacing-secao: clamp(2rem, 1.5rem + 2.2vw, 4rem);
@@ -94,6 +103,149 @@
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Sublinhado "à mão" do trecho em itálico dos títulos.
+ * É background (e não ::after) para acompanhar a quebra de linha: com
+ * `box-decoration-break: clone` cada linha do trecho ganha o próprio traço.
+ * O SVG não enxerga currentColor quando vira data URI, por isso a cor vai
+ * escrita no traço — uma variante para fundo claro e outra para fundo roxo.
+ * `non-scaling-stroke` mantém a espessura quando o traço estica com a linha.
+ */
+@utility sublinhado-mao {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8.5C40 4 88 3.2 128 5.2S182 9.6 197 4.6' fill='none' stroke='%23a98eee' stroke-width='3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.32em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+@utility sublinhado-mao-escuro {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8.5C40 4 88 3.2 128 5.2S182 9.6 197 4.6' fill='none' stroke='%23efe0a5' stroke-width='3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.32em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Card de vidro: translúcido, desfoca o que estiver atrás */
+@utility card-vidro {
+  background: rgb(255 255 255 / 0.30);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(4px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 28px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.18);
+}
+
+/*
+ * Vidro para fundo roxo: o vidro claro vira um lilás médio onde nem texto
+ * branco nem roxo passam de ~4,5:1. Escurecer o fundo em vez de clarear
+ * devolve o texto branco com ~6:1 de contraste.
+ */
+@utility card-vidro-escuro {
+  background: rgb(40 8 72 / 0.3);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 28px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.18);
+}
+
+/*
+ * Botão de vidro. Altura e espaçamento continuam vindo do <Botao>
+ * (min-h de 3.25rem, área de toque confortável no mobile).
+ */
+@utility btn-vidro {
+  color: inherit;
+  background: rgb(255 255 255 / 0.28);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow:
+    0 10px 40px rgb(30 10 60 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.35);
+
+  &:hover {
+    background: rgb(255 255 255 / 0.45);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #7a3fd6;
+    outline-offset: 3px;
+  }
+}
+
+/*
+ * CTA principal: vidro tingido de roxo. O vidro claro puro deixava o botão
+ * principal igual ao secundário e quase invisível nos fundos claros; o tom
+ * roxo devolve a hierarquia sem sair da linguagem de vidro.
+ */
+@utility btn-vidro-roxo {
+  color: var(--color-white);
+  background: rgb(82 25 138 / 0.88);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.25);
+  box-shadow:
+    0 10px 30px -8px rgb(82 25 138 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.3);
+
+  &:hover {
+    background: rgb(107 44 174 / 0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #7a3fd6;
+    outline-offset: 3px;
+  }
+}
+
+/*
+ * CTA sobre banner roxo: o vidro roxo some no roxo, então aqui o botão é
+ * areia sólido (roxo sobre areia, ~9:1), com o mesmo brilho interno do vidro.
+ */
+@utility btn-areia {
+  color: var(--color-roxo);
+  background: var(--color-areia);
+  border: 1px solid rgb(255 255 255 / 0.5);
+  box-shadow:
+    0 10px 30px -8px rgb(20 4 40 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.6);
+
+  &:hover {
+    background: #f6ebbe;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 3px;
+  }
+}
+
+/* Par do card-vidro-escuro: texto branco sobre roxo escurecido (~8:1). */
+@utility btn-vidro-escuro {
+  color: var(--color-white);
+  background: rgb(40 8 72 / 0.3);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.35);
+  box-shadow:
+    0 10px 40px rgb(30 10 60 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.2);
+
+  &:hover {
+    background: rgb(40 8 72 / 0.45);
+  }
+
+  /* O roxo do foco some sobre fundo roxo; branco aparece. */
+  &:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 3px;
   }
 }
 

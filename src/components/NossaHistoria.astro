@@ -5,19 +5,48 @@ import TituloSecao from "./TituloSecao.astro";
 import amanda from "../assets/amanda.jpg";
 
 /**
- * A foto ocupa no máximo 460 CSS px; 2× cobre tela retina.
- * `width` limita a imagem BASE: sem ele o fallback do <img> sai no tamanho
- * original (4160px, ~1 MB). Mesmo cuidado do CarrosselCards.
+ * A foto ocupa no máximo ~416 CSS px (460 da polaroid menos a moldura);
+ * 2× cobre tela retina. `width` limita a imagem BASE: sem ele o fallback do
+ * <img> sai no tamanho original (4160px, ~1 MB). Mesmo cuidado do CarrosselCards.
  */
 const LARGURAS = [460, 920];
 const LARGURA_MAXIMA = 920;
-const SIZES = "(min-width: 64rem) 460px, calc(100vw - 44px)";
+const SIZES = "(min-width: 64rem) 416px, calc(100vw - 68px)";
+
+const AVIAO =
+  "M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z";
+
+/** Linha do tempo: só o que o texto já conta, sem datas inventadas. */
+const marcos = [
+  {
+    titulo: "Um ano nos EUA",
+    texto: "Viveu o inglês de perto",
+    icone: [AVIAO],
+  },
+  {
+    titulo: "Primeiras aulas",
+    texto: "Particulares e online",
+    icone: [
+      "M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16",
+    ],
+  },
+  {
+    titulo: "A equipe hoje",
+    texto: "Novas professoras e idiomas",
+    icone: [
+      "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
+      "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2",
+      "M22 21v-2a4 4 0 0 0-3-3.87",
+      "M16 3.13a4 4 0 0 1 0 7.75",
+    ],
+  },
+];
 ---
 
 <Secao id="historia" fundo="creme">
-  <div class="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+  <div class="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
     <div class="lg:order-2">
-      <TituloSecao inicio="Tudo começou com" enfase="uma mala e um sonho" />
+      <TituloSecao inicio="Tudo começou com" enfase="uma mala e um sonho" sublinhado="claro" />
 
       <p class="mt-6 text-corpo text-cinza">
         O Clube nasceu da história da Amanda com o inglês. Depois de anos estudando o idioma e
@@ -32,21 +61,154 @@ const SIZES = "(min-width: 64rem) 460px, calc(100vw - 44px)";
         uma equipe inteira. Hoje, o Clube existe para ajudar mais pessoas a colocar um novo idioma
         na vida, seja para viajar, trabalhar, morar fora ou simplesmente realizar um sonho antigo.
       </p>
+
+      {/*
+        Mini linha do tempo. Cada marco (menos o último) desenha o trecho de
+        linha até o ícone seguinte: começa 8px depois do próprio ícone (48px,
+        centrado) e termina 8px antes do próximo, somando o gap de 0.75rem.
+      */}
+      <ol class="mt-10 grid grid-cols-3 gap-3">
+        {
+          marcos.map((marco, i) => (
+            <li class="relative flex flex-col items-center text-center">
+              {i < marcos.length - 1 && (
+                <span
+                  class="absolute top-6 left-[calc(50%+2rem)] w-[calc(100%+0.75rem-4rem)] border-t-2 border-dotted border-roxo-claro"
+                  aria-hidden="true"
+                />
+              )}
+              <span
+                class="flex h-12 w-12 items-center justify-center rounded-full bg-roxo text-white shadow-[0_8px_20px_-6px_rgb(82_25_138/0.5)]"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-[22px] w-[22px]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  {marco.icone.map((d) => <path d={d} />)}
+                </svg>
+              </span>
+              <p class="mt-3 text-apoio leading-snug font-semibold text-roxo">{marco.titulo}</p>
+              <p class="mt-1 text-miudo text-cinza">{marco.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
 
-    {/* O retrato é 2/3; o corte 3/4 centralizado tira só as sobras de fundo
-        cinza em cima e embaixo, sem cortar a figura. */}
-    <Picture
-      src={amanda}
-      width={LARGURA_MAXIMA}
-      widths={LARGURAS}
-      sizes={SIZES}
-      formats={["avif", "webp"]}
-      fallbackFormat="webp"
-      alt="Amanda, fundadora do Clube do Fluente, sorrindo de perfil em estúdio de fundo cinza."
-      loading="lazy"
-      decoding="async"
-      class="aspect-[3/4] w-full max-w-[460px] rounded-card object-cover lg:order-1"
-    />
+    {/*
+      Polaroid levemente inclinada (endireita no hover), com carimbo de
+      passaporte no canto e uma rota de voo saindo por baixo. Os enfeites são
+      decorativos e ficam no respiro lateral da seção (22px no mobile).
+    */}
+    <div class="relative mx-auto w-full max-w-[460px] lg:order-1">
+      <figure
+        class="relative rotate-[-2.5deg] rounded-[6px] bg-white p-3 pb-16 shadow-[0_24px_50px_-20px_rgb(40_8_72/0.45)] transition-transform duration-500 ease-out hover:rotate-0 lg:p-4 lg:pb-20"
+      >
+        {/* O retrato é 2/3; o corte 3/4 centralizado tira só as sobras de fundo
+            cinza em cima e embaixo, sem cortar a figura. */}
+        <Picture
+          src={amanda}
+          width={LARGURA_MAXIMA}
+          widths={LARGURAS}
+          sizes={SIZES}
+          formats={["avif", "webp"]}
+          fallbackFormat="webp"
+          alt="Amanda, fundadora do Clube do Fluente, sorrindo de perfil em estúdio de fundo cinza."
+          loading="lazy"
+          decoding="async"
+          class="block aspect-[3/4] w-full rounded-[2px] object-cover"
+        />
+        <figcaption
+          class="absolute inset-x-0 bottom-5 text-center font-display text-subtitulo italic text-roxo lg:bottom-7"
+        >
+          Amanda · fundadora
+        </figcaption>
+      </figure>
+
+      {/* Carimbo de passaporte. `multiply` faz a "tinta" pegar a cor de baixo. */}
+      <svg
+        viewBox="0 0 150 104"
+        class="absolute -top-5 -right-3 w-[8.5rem] rotate-[9deg] text-roxo-medio opacity-90 mix-blend-multiply lg:-top-7 lg:-right-10 lg:w-[10.5rem]"
+        aria-hidden="true"
+      >
+        <rect x="3" y="3" width="144" height="98" rx="16" fill="none" stroke="currentColor" stroke-width="3" />
+        <rect
+          x="10"
+          y="10"
+          width="130"
+          height="84"
+          rx="11"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-dasharray="4 3"
+        />
+        <text
+          x="75"
+          y="32"
+          text-anchor="middle"
+          fill="currentColor"
+          font-family="var(--font-sans)"
+          font-size="10"
+          font-weight="700"
+          letter-spacing="1.2">ESTADOS UNIDOS</text
+        >
+        <g transform="translate(26 40) scale(1.05)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d={AVIAO} />
+        </g>
+        <text
+          x="92"
+          y="63"
+          text-anchor="middle"
+          fill="currentColor"
+          font-family="var(--font-display)"
+          font-size="28"
+          font-weight="700"
+          font-style="italic">USA</text
+        >
+        <text
+          x="75"
+          y="86"
+          text-anchor="middle"
+          fill="currentColor"
+          font-family="var(--font-sans)"
+          font-size="10"
+          font-weight="700"
+          letter-spacing="2">• 1 ANO •</text
+        >
+      </svg>
+
+      {/* Rota de voo pontilhada com o avião na ponta. */}
+      <svg
+        viewBox="0 0 170 90"
+        class="absolute -bottom-10 -left-3 w-[8rem] text-roxo-claro lg:-bottom-12 lg:-left-12 lg:w-[10.5rem]"
+        aria-hidden="true"
+      >
+        <path
+          d="M6 84C30 40 80 18 138 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-dasharray="1 8"
+        />
+        <g
+          transform="translate(140 6) rotate(18)"
+          fill="none"
+          stroke="var(--color-roxo)"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d={AVIAO} />
+        </g>
+      </svg>
+    </div>
   </div>
 </Secao>

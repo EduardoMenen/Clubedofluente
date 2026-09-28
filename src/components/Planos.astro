@@ -4,6 +4,30 @@ import TituloSecao from "./TituloSecao.astro";
 import Botao from "./Botao.astro";
 import { LINKS } from "../config";
 
+/**
+ * Ícones de pessoas (traço 24×24): a quantidade de figuras acompanha a
+ * modalidade. Turma reaproveita o trio e ganha um selo "+" por cima.
+ */
+const TRIO = [
+  "M12 10.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4",
+  "M6.5 20v-1.5a4 4 0 0 1 4-4h3a4 4 0 0 1 4 4V20",
+  "M5 11.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6",
+  "M1.5 20v-1a3 3 0 0 1 3-3",
+  "M19 11.3a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6",
+  "M22.5 20v-1a3 3 0 0 0-3-3",
+];
+const icones = {
+  Individual: ["M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8", "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"],
+  Dupla: [
+    "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
+    "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2",
+    "M22 21v-2a4 4 0 0 0-3-3.87",
+    "M16 3.13a4 4 0 0 1 0 7.75",
+  ],
+  Trio: TRIO,
+  Turma: TRIO,
+} as const;
+
 const modalidades = [
   {
     nome: "Individual",
@@ -31,6 +55,7 @@ const modalidades = [
   },
   {
     nome: "Turma",
+    mais: true,
     selo: null,
     etiqueta: "Grupo reduzido",
     linha: null,
@@ -41,7 +66,7 @@ const modalidades = [
 ---
 
 <Secao id="planos" fundo="roxo">
-  <TituloSecao inicio="Escolha como você" enfase="quer estudar">
+  <TituloSecao inicio="Escolha como você" enfase="quer estudar" sublinhado="escuro">
     <Fragment slot="apoio">
       Nas modalidades compartilhadas o custo é dividido entre os participantes.
     </Fragment>
@@ -52,19 +77,50 @@ const modalidades = [
       modalidades.map((modalidade) => (
         <article
           class:list={[
-            "rounded-card p-[18px] lg:p-6",
-            modalidade.destaque ? "bg-areia text-roxo" : "bg-roxo-medio text-white",
+            // Hover sobe o card; `hover:` do Tailwind só vale em aparelho com mouse.
+            "p-[18px] transition duration-200 ease-out hover:-translate-y-1.5 lg:p-6",
+            // Vidro escuro nos cards; o destaque segue sólido em areia, com
+            // borda luminosa e um reflexo que passa de tempos em tempos.
+            modalidade.destaque
+              ? "destaque rounded-[28px] bg-areia text-roxo"
+              : "card-vidro-escuro text-white hover:shadow-[0_22px_44px_-12px_rgb(0_0_0/0.35)]",
           ]}
         >
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="text-subtitulo font-semibold leading-none">{modalidade.nome}</h3>
+            <div class="flex items-center gap-3">
+              <span
+                class:list={[
+                  "relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
+                  modalidade.destaque ? "bg-roxo text-white" : "bg-white/15 text-white",
+                ]}
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  class="h-[22px] w-[22px]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  {icones[modalidade.nome as keyof typeof icones].map((d) => <path d={d} />)}
+                </svg>
+                {modalidade.mais && (
+                  <span class="absolute -top-1 -right-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-areia text-[0.75rem] leading-none font-bold text-roxo">
+                    +
+                  </span>
+                )}
+              </span>
+              <h3 class="text-subtitulo font-semibold leading-none">{modalidade.nome}</h3>
+            </div>
             {modalidade.selo && (
               <span class="rounded-pill bg-roxo px-[10px] py-[5px] text-eyebrow font-semibold uppercase tracking-[0.12em] text-white">
                 {modalidade.selo}
               </span>
             )}
             {modalidade.etiqueta && (
-              <span class="text-apoio text-white/75">{modalidade.etiqueta}</span>
+              <span class="text-apoio text-white/80">{modalidade.etiqueta}</span>
             )}
           </div>
 
@@ -75,7 +131,7 @@ const modalidades = [
           <p
             class:list={[
               "mt-[13px] text-apoio",
-              modalidade.destaque ? "text-roxo/80" : "text-white/80",
+              modalidade.destaque ? "text-roxo/80" : "text-white/85",
             ]}
           >
             {modalidade.texto}
@@ -87,22 +143,22 @@ const modalidades = [
 
   <!-- Faixa de investimento -->
   <div class="mt-3 grid gap-3 lg:mt-5 lg:grid-cols-[1.4fr_1fr] lg:gap-5">
-    <div class="rounded-card bg-creme p-5 text-roxo lg:p-8">
-      <p class="text-apoio font-medium text-roxo/75">Planos a partir de</p>
+    <div class="card-vidro-escuro p-5 text-white lg:p-8">
+      <p class="text-apoio font-medium text-white/80">Planos a partir de</p>
       <p class="mt-1 font-display text-[2.125rem] font-semibold leading-none lg:text-[2.75rem]">
-        R$ 180 <span class="text-subtitulo font-sans font-medium text-roxo/70">/mês</span>
+        R$ 180 <span class="text-subtitulo font-sans font-medium text-white/80">/mês</span>
       </p>
-      <p class="mt-3 max-w-[46ch] text-apoio text-cinza">
+      <p class="mt-3 max-w-[46ch] text-apoio text-white/85">
         O valor exato depende da modalidade e da frequência. A gente calcula com você no WhatsApp.
       </p>
-      <Botao href={LINKS.consultarValor} class="mt-5 w-full sm:w-auto sm:px-8">
+      <Botao href={LINKS.consultarValor} variante="escuro" class="mt-5 w-full sm:w-auto sm:px-8">
         Consultar meu valor no WhatsApp
       </Botao>
     </div>
 
     <!-- Secundario: avulsas e intensivos -->
-    <div class="rounded-card border border-white/25 bg-roxo-medio p-5 text-white lg:p-8">
-      <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-white/70">
+    <div class="card-vidro-escuro p-5 text-white lg:p-8">
+      <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-white/80">
         Também é possível
       </p>
       <p class="mt-[6px] text-apoio text-white/85">
@@ -112,3 +168,62 @@ const modalidades = [
     </div>
   </div>
 </Secao>
+
+<style>
+  /*
+   * Card em destaque (Individual): anel claro + halo areia fazem a "borda com
+   * brilho"; o ::after é um reflexo diagonal que atravessa o card. Fica em
+   * z-index -1 dentro do `isolation`, então passa por cima do fundo areia e
+   * por baixo do texto (não atrapalha a leitura).
+   */
+  .destaque {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 2px rgb(255 255 255 / 0.7),
+      0 0 34px 2px rgb(239 224 165 / 0.55),
+      0 10px 40px rgb(0 0 0 / 0.18);
+  }
+  .destaque:hover {
+    box-shadow:
+      0 0 0 2px rgb(255 255 255 / 0.85),
+      0 0 44px 4px rgb(239 224 165 / 0.7),
+      0 22px 44px -12px rgb(0 0 0 / 0.35);
+  }
+  .destaque::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgb(255 255 255 / 0.6) 50%,
+      transparent 70%
+    );
+    translate: -100% 0;
+    animation: reflexo 5s ease-in-out 1.5s infinite;
+  }
+  /* A passada dura ~1,2s; o resto do ciclo o reflexo espera fora do card. */
+  @keyframes reflexo {
+    0% {
+      translate: -100% 0;
+    }
+    24%,
+    100% {
+      translate: 100% 0;
+    }
+  }
+  /*
+   * O CSS global encurta animações para 0,01ms sob reduced-motion; num
+   * `infinite` isso viraria um pisca-pisca. Aqui o reflexo simplesmente some.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .destaque::after {
+      animation: none;
+      display: none;
+    }
+  }
+</style>

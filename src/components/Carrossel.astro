@@ -31,9 +31,15 @@ const {
 
 <div class={classe} data-raiz-carrossel>
   <div class="relative">
+    {/*
+      `overflow-x: auto` obriga o eixo y a cortar também, e a sombra dos cards
+      sumiria. O padding vertical abre espaço para ela dentro do trilho e as
+      margens negativas devolvem o layout ao tamanho de antes (o 1 que sobra
+      embaixo é o antigo `pb-1`).
+    */}
     <div
       class:list={[
-        "trilho-carrossel gap-3 pb-1 lg:gap-5",
+        "trilho-carrossel -mt-8 -mb-11 gap-3 pt-8 pb-12 lg:gap-5",
         !sempreCarrossel && ["lg:overflow-visible", gradeDesktop, "lg:[&>*]:w-auto"],
       ]}
       data-carrossel

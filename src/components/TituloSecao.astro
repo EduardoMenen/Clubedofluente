@@ -1,7 +1,8 @@
 ---
 /**
  * Título de seção no padrão do design: display serif, com a parte final
- * em itálico, seguido de um texto de apoio opcional (slot "apoio").
+ * em itálico (opcionalmente sublinhada à mão), seguido de um texto de apoio
+ * opcional (slot "apoio").
  */
 interface Props {
   /** Trecho em peso normal. */
@@ -12,6 +13,11 @@ interface Props {
   classeInicio?: string;
   /** Classe de cor do trecho em itálico (padrão: herda da seção). */
   classeEnfase?: string;
+  /**
+   * Sublinhado à mão sob o trecho em itálico. Usado só em algumas seções,
+   * para o traço continuar sendo destaque. "escuro" é a cor para fundo roxo.
+   */
+  sublinhado?: "claro" | "escuro";
   /** Alinha ao centro (usado em seções de fundo cheio). */
   centro?: boolean;
   class?: string;
@@ -21,15 +27,30 @@ const {
   enfase,
   classeInicio = "",
   classeEnfase = "",
+  sublinhado,
   centro = false,
   class: classe = "",
 } = Astro.props;
 const alinhamento = centro ? "text-center mx-auto" : "";
+const classeSublinhado = {
+  claro: "sublinhado-mao",
+  escuro: "sublinhado-mao-escuro",
+};
+/**
+ * Ênfase curta não quebra: sem isso o `text-wrap: balance` pode deixar uma
+ * palavra solta no fim da linha de cima ("Dois idiomas, o / mesmo cuidado").
+ * 20 caracteres ainda cabem numa linha no mobile; ênfases maiores quebram
+ * normalmente.
+ */
+const MAX_ENFASE_SEM_QUEBRA = 20;
+const semQuebra = enfase && enfase.length <= MAX_ENFASE_SEM_QUEBRA ? "whitespace-nowrap" : "";
+/** Nas longas, a primeira palavra fica presa à segunda pelo mesmo motivo ("O / que faz..."). */
+const textoEnfase = enfase?.replace(" ", " ");
 ---
 
 <div class={`${alinhamento} ${classe}`}>
   <h2 class="max-w-[20ch] text-titulo font-semibold" class:list={[centro && "mx-auto"]}>
-    <span class={classeInicio}>{inicio}</span>{enfase && <> <em class={`italic ${classeEnfase}`}>{enfase}</em></>}
+    <span class={classeInicio}>{inicio}</span>{enfase && <> <em class:list={["italic", sublinhado && classeSublinhado[sublinhado], semQuebra, classeEnfase]}>{textoEnfase}</em></>}
   </h2>
   {
     Astro.slots.has("apoio") && (

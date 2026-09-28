@@ -3,40 +3,157 @@ import Secao from "./Secao.astro";
 import TituloSecao from "./TituloSecao.astro";
 import Botao from "./Botao.astro";
 import { LINKS } from "../config";
+
+/** O que acontece nos 30 minutos — mesmo conteúdo do texto original do Clube. */
+const etapas = [
+  "Você conhece a metodologia do Clube",
+  "Conta seus objetivos com o idioma",
+  "Fala sobre suas experiências anteriores",
+  "Identificamos os principais pontos a desenvolver",
+];
 ---
 
 <Secao id="aula-gratis" fundo="areia">
-  <div class="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
-    <div>
-      <TituloSecao inicio="Aula experimental" enfase="gratuita" />
+  {/*
+    Banner: degradê roxo com manchas desfocadas atrás do painel de vidro
+    (é o que faz o vidro aparecer de verdade). `isolate` + `-z-10` põe as
+    manchas acima do degradê e abaixo do conteúdo; o selo fica fora do
+    recorte para poder vazar pela borda.
+  */}
+  <div
+    class="relative isolate rounded-[28px] bg-[linear-gradient(135deg,var(--color-roxo)_0%,var(--color-roxo-medio)_100%)] px-5 pt-16 pb-8 text-white shadow-[0_24px_60px_-24px_rgb(40_8_72/0.6)] sm:px-8 lg:p-14"
+  >
+    <div class="absolute inset-0 -z-10 overflow-hidden rounded-[inherit]" aria-hidden="true">
+      <span class="absolute -top-16 right-[8%] h-72 w-72 rounded-full bg-roxo-claro/45 blur-3xl"></span>
+      <span class="absolute right-[35%] -bottom-20 h-56 w-56 rounded-full bg-areia/25 blur-3xl"></span>
+      <span class="absolute -bottom-24 -left-16 h-60 w-60 rounded-full bg-roxo-claro/25 blur-3xl"></span>
+    </div>
 
-      <p class="mt-5 max-w-[52ch] text-corpo text-roxo/80">
-        Antes de escolher um plano, conheça como o Clube funciona.
-      </p>
+    {/* Selo girando. Decorativo: "gratuita" já está no título. */}
+    <svg
+      viewBox="0 0 120 120"
+      class="selo absolute -top-7 right-3 z-10 h-[5.5rem] w-[5.5rem] drop-shadow-[0_10px_18px_rgb(40_8_72/0.45)] lg:-top-12 lg:-right-6 lg:h-32 lg:w-32"
+      aria-hidden="true"
+    >
+      <defs>
+        <path id="selo-trilha" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0" />
+      </defs>
+      <circle cx="60" cy="60" r="58" fill="var(--color-areia)" />
+      <circle cx="60" cy="60" r="31" fill="none" stroke="var(--color-roxo)" stroke-opacity="0.25" />
+      <text
+        fill="var(--color-roxo)"
+        font-family="var(--font-sans)"
+        font-size="12.5"
+        font-weight="700"
+        letter-spacing="1"
+      >
+        <textPath href="#selo-trilha" textLength="274" lengthAdjust="spacing">
+          GRÁTIS • SEM COMPROMISSO •
+        </textPath>
+      </text>
+      <path
+        d="M60 45c1.6 8.3 5.2 12.2 14 15-8.8 2.8-12.4 6.7-14 15-1.6-8.3-5.2-12.2-14-15 8.8-2.8 12.4-6.7 14-15z"
+        fill="var(--color-roxo)"
+      />
+    </svg>
 
-      <p class="mt-5 max-w-[52ch] text-corpo font-medium text-roxo">
-        Sua primeira experiência com o Clube começa aqui.
-      </p>
+    <div class="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14">
+      <div>
+        <TituloSecao inicio="Aula experimental" enfase="gratuita" sublinhado="escuro" />
 
-      <div class="mt-7 hidden lg:block">
-        <Botao href={LINKS.aulaGratis} class="px-8">Agendar minha aula experimental</Botao>
+        <p class="mt-5 max-w-[46ch] text-corpo text-white/85">
+          Antes de escolher um plano, conheça como o Clube funciona.
+        </p>
+
+        <p class="mt-4 max-w-[46ch] text-corpo font-medium text-white">
+          Sua primeira experiência com o Clube começa aqui.
+        </p>
+
+        <div class="mt-8 hidden lg:block">
+          <Botao href={LINKS.aulaGratis} variante="areia" class="px-8">
+            Agendar minha aula experimental
+          </Botao>
+        </div>
       </div>
-    </div>
 
-    <div class="rounded-card bg-white p-[18px] lg:p-8">
-      <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-roxo/70">
-        30 minutos
-      </p>
+      <div class="card-vidro-escuro p-5 lg:p-7">
+        <div class="flex items-center gap-4">
+          {/* Relógio com meia volta preenchida: 30 dos 60 minutos. */}
+          <svg viewBox="0 0 48 48" class="h-16 w-16 shrink-0 lg:h-20 lg:w-20" aria-hidden="true">
+            <circle cx="24" cy="24" r="21" fill="rgb(255 255 255 / 0.08)" />
+            <path d="M24 24V3a21 21 0 0 1 0 42z" fill="var(--color-areia)" fill-opacity="0.9" />
+            <circle cx="24" cy="24" r="21" fill="none" stroke="white" stroke-width="2" />
+            <path
+              d="M24 6.5v2.5M41.5 24H39M24 41.5V39M6.5 24H9"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path d="M24 24v15" stroke="var(--color-roxo)" stroke-width="2.4" stroke-linecap="round" />
+            <circle cx="24" cy="24" r="2.6" fill="white" />
+          </svg>
+          <p class="leading-none">
+            <span class="font-display text-[3.25rem] font-semibold italic lg:text-[4rem]">30</span>
+            <span class="ml-1 text-subtitulo font-medium text-white/85">min</span>
+            <span class="mt-1 block text-apoio text-white/75">ao vivo, com uma professora</span>
+          </p>
+        </div>
 
-      <p class="mt-4 text-apoio text-cinza">
-        A aula experimental tem duração de 30 minutos e é uma oportunidade para entender melhor a
-        metodologia, apresentar objetivos, falar sobre experiências anteriores com o idioma e
-        identificar os principais pontos a desenvolver.
-      </p>
-    </div>
+        <h3 class="mt-6 font-sans text-eyebrow font-semibold tracking-[0.12em] text-white/80 uppercase">
+          O que acontece na aula
+        </h3>
+        <ul class="mt-3 flex flex-col gap-3">
+          {
+            etapas.map((etapa) => (
+              <li class="flex items-start gap-3 text-apoio text-white/90">
+                <span
+                  class="mt-[1px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-areia text-roxo"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-3.5 w-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="m5 12.5 4.5 4.5L19 7.5" />
+                  </svg>
+                </span>
+                <span>{etapa}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
-    <div class="lg:hidden">
-      <Botao href={LINKS.aulaGratis} class="w-full">Agendar minha aula experimental</Botao>
+      <div class="lg:hidden">
+        <Botao href={LINKS.aulaGratis} variante="areia" class="w-full">
+          Agendar minha aula experimental
+        </Botao>
+      </div>
     </div>
   </div>
 </Secao>
+
+<style>
+  .selo {
+    animation: girar 18s linear infinite;
+  }
+  @keyframes girar {
+    to {
+      rotate: 360deg;
+    }
+  }
+  /*
+   * O CSS global encurta animações para 0,01ms sob reduced-motion; num
+   * `infinite` isso faria o selo tremer sem parar. Aqui ele fica parado.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .selo {
+      animation: none;
+    }
+  }
+</style>

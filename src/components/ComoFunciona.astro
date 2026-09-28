@@ -2,50 +2,120 @@
 import Secao from "./Secao.astro";
 import TituloSecao from "./TituloSecao.astro";
 
+/** `icone` escolhe o desenho no mapa de SVGs abaixo. */
 const passos = [
   {
     numero: "01",
+    icone: "whatsapp",
     titulo: "Você chama no WhatsApp",
     texto: "Sem formulário longo, sem robô. Conversa direta com a equipe.",
   },
   {
     numero: "02",
+    icone: "alvo",
     titulo: "A gente entende seu objetivo",
     texto: "Idioma, nível atual, para que você precisa e quando pode estudar.",
   },
   {
     numero: "03",
+    icone: "play",
     titulo: "Aula experimental gratuita",
     texto: "30 minutos ao vivo com uma professora, sem compromisso.",
   },
   {
     numero: "04",
+    icone: "calendario",
     titulo: "Montamos seu plano",
     texto: "Modalidade, horário fixo e início das aulas recorrentes.",
   },
-];
+] as const;
 ---
 
 <Secao id="como-funciona" fundo="lavanda">
-  <TituloSecao inicio="Do primeiro oi até" enfase="a sua primeira aula">
-    <Fragment slot="apoio">
-      O fluxo abaixo será ajustado ao processo atual do Clube.
-    </Fragment>
-  </TituloSecao>
+  <TituloSecao inicio="Do primeiro oi até" enfase="a sua primeira aula" sublinhado="claro" />
 
+  {/*
+    Linha do tempo: no mobile o ícone fica numa coluna à esquerda e a linha
+    pontilhada desce entre eles; a partir de lg os ícones viram uma fileira
+    acima dos cards e a linha corre na horizontal.
+    Cada passo (menos o último) desenha o próprio trecho de linha até o ícone
+    seguinte, então a conta depende só do tamanho do ícone e do gap:
+    - mobile: ícone de 3rem, gap de 0.75rem → começa 4px abaixo do ícone e
+      termina 4px antes do próximo (-bottom-2 = -gap + 4px).
+    - lg: ícone de 3.5rem, gap de 1.25rem → começa 8px depois do ícone e
+      termina 8px antes do próximo (-right-3 = -gap + 8px).
+  */}
   <ol class="mt-9 grid gap-3 lg:mt-12 lg:grid-cols-4 lg:gap-5">
     {
-      passos.map((passo) => (
-        <li class="flex gap-4 rounded-card bg-white p-4 lg:flex-col lg:gap-3 lg:p-6">
+      passos.map((passo, i) => (
+        <li class="relative grid grid-cols-[3rem_1fr] items-start gap-3 lg:grid-cols-1 lg:grid-rows-[auto_1fr] lg:gap-4">
+          {i < passos.length - 1 && (
+            <span
+              class="absolute top-[3.25rem] -bottom-2 left-[23px] border-l-2 border-dotted border-roxo-claro lg:top-[27px] lg:bottom-auto lg:left-16 lg:-right-3 lg:border-t-2 lg:border-l-0"
+              aria-hidden="true"
+            />
+          )}
+
           <span
-            class="flex h-8 min-w-[2.1875rem] shrink-0 items-center justify-center rounded-[0.625rem] bg-roxo px-2 font-sans text-apoio font-semibold text-white"
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-roxo text-white shadow-[0_8px_20px_-6px_rgb(82_25_138/0.5)] lg:h-14 lg:w-14"
             aria-hidden="true"
           >
-            {passo.numero}
+            <svg
+              viewBox="0 0 24 24"
+              class="h-6 w-6 lg:h-7 lg:w-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              {passo.icone === "whatsapp" && (
+                <>
+                  <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                  <path
+                    d="M9.3 8.2c.3-.3.8-.3 1 .1l.8 1.4c.2.3.1.7-.1 1l-.5.5c.5 1 1.3 1.8 2.3 2.3l.5-.5c.3-.2.7-.3 1-.1l1.4.8c.4.2.4.7.1 1-.8.8-1.9 1.1-2.9.7a8 8 0 0 1-4.3-4.3c-.4-1-.1-2.1.7-2.9z"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                </>
+              )}
+              {passo.icone === "alvo" && (
+                <>
+                  <circle cx="12" cy="12" r="9.5" />
+                  <circle cx="12" cy="12" r="5.5" />
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                </>
+              )}
+              {passo.icone === "play" && (
+                <>
+                  <circle cx="12" cy="12" r="9.5" />
+                  <path d="M10 8.5v7l5.5-3.5z" fill="currentColor" />
+                </>
+              )}
+              {passo.icone === "calendario" && (
+                <>
+                  <rect x="3" y="4.5" width="18" height="17" rx="2.5" />
+                  <path d="M8 2.5v4M16 2.5v4M3 10h18" />
+                  <path d="m9 15.5 2 2 4-4" />
+                </>
+              )}
+            </svg>
           </span>
-          <div>
-            <h3 class="font-sans text-corpo font-semibold leading-snug text-roxo">{passo.titulo}</h3>
-            <p class="mt-1 text-apoio text-cinza">{passo.texto}</p>
+
+          <div class="card-vidro relative overflow-hidden p-4 lg:self-stretch lg:p-6">
+            {/* Número decorativo: a ordem já vem do <ol> para leitor de tela. */}
+            <span
+              class="pointer-events-none absolute -top-2 right-3 font-display text-[4.5rem] leading-none font-semibold italic text-roxo/10 select-none lg:text-[5.5rem]"
+              aria-hidden="true"
+            >
+              {passo.numero}
+            </span>
+            <div class="relative">
+              <h3 class="font-sans text-corpo font-semibold leading-snug text-roxo">
+                {passo.titulo}
+              </h3>
+              <p class="mt-1 text-apoio text-cinza">{passo.texto}</p>
+            </div>
           </div>
         </li>
       ))

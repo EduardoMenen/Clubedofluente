@@ -1,6 +1,11 @@
 ---
+import { Picture, getImage } from "astro:assets";
 import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
 import Carrossel from "./Carrossel.astro";
+import printCasal from "../assets/depoimentos/whatsapp-casal.jpg";
+import printKelly from "../assets/depoimentos/whatsapp-kelly.jpg";
+import printContinuidade from "../assets/depoimentos/whatsapp-continuidade.jpg";
 
 /** Depoimentos como os alunos escreveram — só o primeiro nome acompanha. */
 const depoimentos = [
@@ -20,10 +25,50 @@ const depoimentos = [
     nome: "Paula",
   },
 ];
+
+/**
+ * Prints reais do WhatsApp do Clube. O `alt` transcreve a mensagem: a imagem
+ * é o conteúdo, e quem usa leitor de tela precisa do texto inteiro.
+ * `grade` é a fatia de cada print na grade de 12 colunas do desktop: as
+ * larguras (3/5/4) foram escolhidas pela proporção de cada imagem, para as
+ * três ficarem com alturas parecidas lado a lado.
+ */
+const prints = [
+  {
+    imagem: printCasal,
+    legenda: "Casal de alunos · Inglês",
+    grade: "lg:col-span-3",
+    alt: "Print de conversa no WhatsApp. Um casal de alunos escreve: “Amamos nossas aulas de inglês! Como buscamos um curso mais personalizado, que nos permitisse estudar em casal, encontramos exatamente isso. As aulas da Karol são muito didáticas, leves e sempre pensadas nas nossas necessidades. Ter essa conexão com a professora faz toda a diferença, pois nos sentimos à vontade para aprender, tirar dúvidas e praticar. Em poucos meses de estudo, já percebemos uma grande evolução na nossa compreensão do inglês. Além disso, as aulas são dinâmicas e tornam o aprendizado muito mais agradável, o que nos motiva a continuar estudando.” O Clube responde: “Que demais!! Ficamos muito felizes com seu feedback.” E o aluno completa: “Deixando claro aqui, minha esposa pediu para ressaltar que ela também participou do depoimento… rsrs”.",
+  },
+  {
+    imagem: printKelly,
+    legenda: "Kelly · Espanhol · nota máxima na proficiência",
+    grade: "lg:col-span-5",
+    alt: "Print de conversa no WhatsApp. No topo, a mensagem da aluna para a professora: “Paua la prueba fue hoy. Ya salió el resultado.” Abaixo, o Clube comemora: “Lindo presente de hoje: nossa aluna Kelly tirou nota máxima na prova de proficiência de espanhol para o cargo de Chefe de Cabine da Latam. Vai realizar o sonho dela de ser a Chefe, simplesmente.”",
+  },
+  {
+    imagem: printContinuidade,
+    legenda: "Inglês · organização e continuidade das aulas",
+    grade: "lg:col-span-4",
+    alt: "Print de conversa no WhatsApp. Um aluno escreve: “Minha experiência com o Clube do Fluente foi muito boa! O que mais gosto é da organização e da continuidade das aulas. A teacher sempre retoma um pouco o que vimos anteriormente e, a partir dali, dá sequência ao conteúdo. Isso ajuda muito a fixar o aprendizado e acompanhar a evolução. Ela também é super paciente e didática, além de trazer assuntos atuais e temas que fazem parte do nosso dia a dia. Isso deixa as aulas mais interessantes e facilita bastante na hora de conversar. Percebi uma grande evolução em pouco espaço de tempo.”",
+  },
+];
+
+/** Versão grande de cada print para o zoom (a miniatura usa o <Picture>). */
+const zooms = await Promise.all(
+  prints.map((print) => getImage({ src: print.imagem, width: print.imagem.width, format: "webp" }))
+);
+
+/** Maior largura em tela: 5/12 de 1104px no desktop (~450px); 280px no carrossel. */
+const LARGURAS = [280, 450, 560, 900];
+const SIZES = "(min-width: 64rem) 450px, 280px";
+
+const ESTRELA =
+  "M12 2.6l2.8 5.9 6.4.8-4.7 4.5 1.2 6.4L12 17.1l-5.7 3.1 1.2-6.4-4.7-4.5 6.4-.8z";
 ---
 
 <Secao id="depoimentos" fundo="lavanda">
-  <h2 class="text-titulo font-semibold text-roxo">Quem já está falando</h2>
+  <TituloSecao inicio="Quem já está" enfase="falando" />
 
   <Carrossel
     rotulo="Depoimentos de alunos"
@@ -33,19 +78,181 @@ const depoimentos = [
   >
     {
       depoimentos.map((depoimento) => (
-        <figure class="flex w-[304px] flex-col rounded-card bg-white p-[18px] lg:p-8">
+        <figure class="card-vidro relative flex w-[304px] flex-col p-[18px] lg:p-8">
+          {/* Aspas grandes no canto; decorativas. */}
           <span
-            class="font-display text-[2.5rem] leading-none text-roxo-claro"
+            class="pointer-events-none absolute top-1 right-5 font-display text-[5.5rem] leading-none text-roxo-claro select-none lg:top-3 lg:right-7 lg:text-[6.5rem]"
             aria-hidden="true"
           >
             &ldquo;
           </span>
-          <blockquote class="mt-2 flex-1 text-apoio text-cinza lg:text-corpo">
+
+          {/* Estrelas decorativas: não são uma nota dada pelo aluno. */}
+          <span class="flex gap-[3px] text-ouro" aria-hidden="true">
+            {Array.from({ length: 5 }).map(() => (
+              <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="currentColor">
+                <path d={ESTRELA} />
+              </svg>
+            ))}
+          </span>
+
+          <blockquote class="relative mt-5 flex-1 text-apoio text-cinza lg:text-corpo">
             {depoimento.texto}
           </blockquote>
-          <figcaption class="mt-5 text-corpo font-semibold text-roxo">{depoimento.nome}</figcaption>
+
+          <figcaption class="mt-6 flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(140deg,var(--color-roxo-medio),var(--color-roxo-claro))] font-display text-subtitulo font-semibold text-white"
+              aria-hidden="true"
+            >
+              {depoimento.nome.charAt(0)}
+            </span>
+            <span class="text-corpo font-semibold text-roxo">{depoimento.nome}</span>
+          </figcaption>
         </figure>
       ))
     }
   </Carrossel>
+
+  <div class="mt-14 lg:mt-20">
+    <h3 class="flex items-center gap-3 text-subtitulo font-semibold text-roxo">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-roxo text-white"
+        aria-hidden="true"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+          <path
+            d="M9.3 8.2c.3-.3.8-.3 1 .1l.8 1.4c.2.3.1.7-.1 1l-.5.5c.5 1 1.3 1.8 2.3 2.3l.5-.5c.3-.2.7-.3 1-.1l1.4.8c.4.2.4.7.1 1-.8.8-1.9 1.1-2.9.7a8 8 0 0 1-4.3-4.3c-.4-1-.1-2.1.7-2.9z"
+            fill="currentColor"
+            stroke="none"
+          />
+        </svg>
+      </span>
+      Direto do nosso WhatsApp
+    </h3>
+    <p class="mt-3 max-w-[52ch] text-apoio text-cinza">
+      Mensagens reais que os alunos mandaram para a gente. Toque em um print para ampliar.
+    </p>
+  </div>
+
+  {/*
+    Mobile: carrossel (cada print com 280px, alinhado ao topo para o curto não
+    esticar até a altura do mais alto). lg: grade de 12 colunas, ver `grade`.
+  */}
+  <Carrossel
+    rotulo="Prints de mensagens de alunos no WhatsApp"
+    itens={prints.length}
+    gradeDesktop="lg:grid lg:grid-cols-12 lg:items-start"
+    class="mt-6 text-roxo lg:mt-8"
+  >
+    {
+      prints.map((print, i) => (
+        <figure class:list={["w-[280px] self-start", print.grade]}>
+          <button
+            type="button"
+            class="group relative block w-full cursor-zoom-in rounded-[22px] bg-white p-2 text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_18px_36px_-14px_rgb(82_25_138/0.35)]"
+            aria-label={`Ampliar print: ${print.legenda}`}
+            data-zoom={zooms[i].src}
+            data-zoom-alt={print.alt}
+          >
+            <Picture
+              src={print.imagem}
+              widths={LARGURAS}
+              sizes={SIZES}
+              formats={["avif", "webp"]}
+              fallbackFormat="webp"
+              alt={print.alt}
+              loading="lazy"
+              decoding="async"
+              class="block h-auto w-full rounded-[16px]"
+            />
+            <span
+              class="absolute right-4 bottom-4 flex h-9 w-9 items-center justify-center rounded-full bg-roxo/85 text-white shadow-md transition group-hover:bg-roxo"
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                class="h-[18px] w-[18px]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="m20 20-4.2-4.2M11 8.5v5M8.5 11h5" />
+              </svg>
+            </span>
+          </button>
+          <figcaption class="mt-3 px-2 text-miudo font-medium text-roxo/75">{print.legenda}</figcaption>
+        </figure>
+      ))
+    }
+  </Carrossel>
+
+  {/* Zoom dos prints: <dialog> nativo já cuida de foco, Esc e do fundo. */}
+  <dialog
+    id="zoom-print"
+    class="m-auto max-h-[92vh] w-[min(94vw,1100px)] overflow-hidden rounded-[24px] bg-white p-0 shadow-2xl backdrop:bg-[rgb(20_4_40/0.75)] backdrop:backdrop-blur-sm"
+    aria-label="Print ampliado"
+  >
+    <div class="max-h-[92vh] overflow-auto p-3" data-zoom-area>
+      {/* Cabe inteiro na janela, em largura e em altura. */}
+      <img
+        src=""
+        alt=""
+        class="mx-auto block h-auto max-h-[calc(92vh-1.5rem)] w-auto max-w-full rounded-[16px]"
+        data-zoom-img
+      />
+    </div>
+    <button
+      type="button"
+      class="absolute top-3 right-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-roxo text-white shadow-lg"
+      aria-label="Fechar"
+      data-zoom-fechar
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+      >
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+  </dialog>
 </Secao>
+
+<script>
+  const dialogo = document.getElementById("zoom-print") as HTMLDialogElement | null;
+  const imagem = dialogo?.querySelector<HTMLImageElement>("[data-zoom-img]");
+  const area = dialogo?.querySelector<HTMLElement>("[data-zoom-area]");
+
+  if (dialogo && imagem && area) {
+    document.querySelectorAll<HTMLButtonElement>("[data-zoom]").forEach((botao) => {
+      botao.addEventListener("click", () => {
+        imagem.src = botao.dataset.zoom ?? "";
+        imagem.alt = botao.dataset.zoomAlt ?? "";
+        area.scrollTo(0, 0);
+        dialogo.showModal();
+      });
+    });
+
+    dialogo.querySelector("[data-zoom-fechar]")?.addEventListener("click", () => dialogo.close());
+
+    // Clique fora da imagem (no fundo escurecido) fecha.
+    dialogo.addEventListener("click", (evento) => {
+      if (evento.target === dialogo) dialogo.close();
+    });
+  }
+</script>

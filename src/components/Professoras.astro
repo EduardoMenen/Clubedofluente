@@ -1,8 +1,10 @@
 ---
 import { Picture } from "astro:assets";
 import Secao from "./Secao.astro";
+import TituloSecao from "./TituloSecao.astro";
 import Carrossel from "./Carrossel.astro";
 import Botao from "./Botao.astro";
+import Bandeira from "./Bandeira.astro";
 import { LINKS } from "../config";
 import karoline from "../assets/karoline.jpeg";
 import giovanna from "../assets/giovanna.jpeg";
@@ -11,6 +13,7 @@ import poliana from "../assets/poliana.jpeg";
 import luiza from "../assets/luiza.jpeg";
 import graziele from "../assets/graziele.jpeg";
 import milyena from "../assets/milyena.jpeg";
+import karen from "../assets/karen.jpeg";
 
 /**
  * Cada professora manda a própria foto e o próprio texto — por isso o card
@@ -28,8 +31,8 @@ const professoras = [
     tag: "Inglês",
     saudacao: "Hi! I'm Karoline.",
     paragrafos: [
-      "Sou do Rio de Janeiro e professora de inglês há mais de 5 anos. Minha paixão pelo idioma começou dando aulas para crianças. Sou certificada pela Cambridge (FCE e CAE) e já atuei como tradutora em eventos.",
-      "Já morei na Alemanha e em Dubai, onde o inglês fazia parte da minha rotina e pude vivenciar de perto diferentes culturas, conhecer pessoas e ouvir suas histórias. Amo viajar, praia e conhecer lugares novos.",
+      "Sou professora de inglês há mais de 5 anos e certificada pela Cambridge (FCE e CAE). Também já atuei como tradutora em eventos.",
+      "Já morei na Alemanha e em Dubai. Amo viajar, praia e conhecer lugares novos.",
     ],
     foto: karoline,
     alt: "Karoline, de cabelos longos loiros, sorrindo levemente sob a luz do fim de tarde.",
@@ -37,11 +40,11 @@ const professoras = [
   {
     nome: "Giovanna",
     tag: "Inglês",
-    saudacao: "Hi! I'm Giovanna.",
+    saudacao: "Hello, I'm Giovanna!",
     paragrafos: [
-      "Tenho 13 anos de experiência como professora de inglês e me apaixonei pelo idioma ainda na infância. Foi ali que descobri como aprender uma nova língua pode abrir portas para um universo cultural completamente novo.",
+      "Tenho 13 anos de experiência como professora de inglês.",
       "Tenho experiência com aulas in-company para profissionais de diferentes áreas.",
-      "Adoro estudar outros idiomas, ouvir música, desenhar e assistir a filmes e séries. Meus gêneros favoritos são terror e fantasia.",
+      "Adoro estudar outros idiomas, ouvir música, desenhar e assistir a filmes e séries, principalmente terror e fantasia.",
     ],
     foto: giovanna,
     alt: "Giovanna, de cabelos longos escuros e blusa vinho, apoiando o rosto na mão.",
@@ -51,10 +54,9 @@ const professoras = [
     tag: "Espanhol",
     saudacao: "¡Hola! Soy Paula.",
     paragrafos: [
-      "Sou formada em Letras, tenho pós-graduação em Língua Espanhola e certificação SIELE. Tenho experiência com alunos brasileiros e estrangeiros.",
-      "Já vivi no Chile e tive a oportunidade de conhecer mais de perto a língua e a cultura hispânica.",
-      "Dou aulas de espanhol para brasileiros e português para estrangeiros.",
-      "Sou apaixonada por idiomas, literatura e cultura. Para mim, aprender espanhol é também ganhar confiança para se comunicar e conhecer novas culturas.",
+      "Sou formada em Letras, pós-graduada em Língua Espanhola e certificada pelo SIELE. Dou aulas de espanhol para brasileiros e português para estrangeiros.",
+      "Já vivi no Chile e tenho grande contato com a língua e a cultura hispânica.",
+      "Sou apaixonada por idiomas, literatura e cultura.",
     ],
     foto: paula,
     alt: "Paula, de cabelos longos escuros e blusa rosa, sorrindo diante de uma parede de madeira com um quadro colorido.",
@@ -64,8 +66,8 @@ const professoras = [
     tag: "Inglês e francês",
     saudacao: "Hello, I'm Poliana!",
     paragrafos: [
-      "Sou graduanda em Relações Internacionais e falo português, inglês e francês. Dou aulas de inglês e francês há 10 anos.",
-      "Sou apaixonada por línguas, culturas e viagens, e esse interesse também influenciou minha escolha por Relações Internacionais. Gosto de conhecer novos lugares, ter contato com diferentes culturas e aprender novas formas de se comunicar.",
+      "Sou graduanda em Relações Internacionais, falo português, inglês e francês e dou aulas de inglês e francês há 10 anos.",
+      "Sou apaixonada por idiomas, culturas e viagens, interesses que também me levaram a escolher Relações Internacionais.",
     ],
     foto: poliana,
     alt: "Poliana, de cabelos ondulados escuros e óculos de armação fina, olhando para a câmera.",
@@ -76,9 +78,9 @@ const professoras = [
     tag: "Inglês",
     saudacao: "Hello, I'm Luiza!",
     paragrafos: [
-      "Sou graduanda em Biomedicina e tenho certificação Cambridge Advanced (CAE). Também tenho experiência com preparação para exames de proficiência, especialmente no formato Cambridge.",
-      "Participei da International Student Week in Ilmenau, na Alemanha, como representante do Brasil, em uma experiência internacional com participantes de diversos países.",
-      "Tenho muito interesse por idiomas, ciência, viagens e diferentes culturas. Além do inglês, também estudo espanhol e alemão.",
+      "Sou graduanda em Biomedicina e tenho CAE, além de experiência com preparação para exames de proficiência.",
+      "Já representei o Brasil na International Student Week in Ilmenau, na Alemanha.",
+      "Tenho interesse por idiomas, ciência, viagens e diferentes culturas. Também estudo espanhol e alemão.",
     ],
     foto: luiza,
     alt: "Luiza, de casaco bege e óculos de sol na cabeça, diante da Catedral de Pedra de Canela.",
@@ -88,24 +90,42 @@ const professoras = [
     tag: "Inglês",
     saudacao: "Hello, I'm Graziele!",
     paragrafos: [
-      "Sou formada em Pedagogia e professora de inglês há 4 anos. Também estudo francês e tenho grande interesse por idiomas, educação e diferentes formas de aprendizagem.",
-      "No Clube, além das aulas de inglês, também sou responsável por conduzir as aulas experimentais, sendo um dos primeiros contatos dos alunos com a metodologia e com o funcionamento das aulas.",
+      "Sou formada em Pedagogia, professora de inglês há 4 anos e também estudo francês.",
+      "No Clube, além das aulas de inglês, também conduzo as aulas experimentais e apresento aos alunos como funciona a metodologia.",
     ],
     foto: graziele,
     alt: "Graziele, de cabelos cacheados e óculos, em frente à sua mesa de trabalho com notebook e plantas.",
   },
   {
-    nome: "Milyena",
+    nome: "Mylena",
     tag: "Inglês",
-    saudacao: "Hello, I'm Milyena!",
+    saudacao: "Hello, I'm Mylena!",
     paragrafos: [
-      "Sou formada em História, com especialização em Metodologias Ativas, e dou aulas de inglês há 3 anos. Já trabalhei com diferentes faixas etárias e perfis de alunos.",
-      "Sou apaixonada pelo universo da cultura pop, e muito do meu inglês foi desenvolvido conversando com pessoas de diferentes lugares do mundo sobre assuntos que gosto e pesquisando sobre meus próprios interesses.",
+      "Sou formada em História, especialista em Metodologias Ativas e professora de inglês.",
+      "Sou apaixonada por cultura pop.",
     ],
     foto: milyena,
-    alt: "Milyena, de cabelos longos cacheados, sorrindo em frente a uma parede clara.",
+    alt: "Mylena, de cabelos longos cacheados, sorrindo em frente a uma parede clara.",
+  },
+  {
+    nome: "Karen",
+    tag: "Inglês",
+    saudacao: "Hello, I'm Karen!",
+    paragrafos: [
+      "Sou apaixonada pelo idioma, cultura pop e universo geek.",
+      "Também tenho experiência com tradução, interpretação e projetos voluntários.",
+    ],
+    foto: karen,
+    alt: "Karen, de cabelos longos cacheados e argola nas orelhas, sorrindo em uma selfie.",
   },
 ];
+
+/** Bandeiras que acompanham cada tag de idioma. */
+const bandeirasDaTag: Record<string, ("usa" | "espanha" | "franca")[]> = {
+  Inglês: ["usa"],
+  Espanhol: ["espanha"],
+  "Inglês e francês": ["usa", "franca"],
+};
 
 /** A foto ocupa 112 CSS px no card; 3× cobre tela retina. */
 const LARGURAS = [112, 224, 336];
@@ -113,9 +133,7 @@ const SIZES = "112px";
 ---
 
 <Secao id="professoras" fundo="creme">
-  <h2 class="max-w-[20ch] text-titulo font-semibold text-roxo">
-    Nossas <em class="italic">professoras</em>
-  </h2>
+  <TituloSecao inicio="Nossas" enfase="professoras" />
 
   <p class="mt-4 max-w-[62ch] text-corpo text-cinza">
     Cada professora traz um jeito de ensinar, uma bagagem e experiências diferentes com o idioma.
@@ -133,30 +151,42 @@ const SIZES = "112px";
   >
     {
       professoras.map((professora) => (
-        <article class="flex w-[300px] flex-col rounded-card bg-white p-[14px] lg:p-5">
+        <article class="group card-vidro flex w-[300px] flex-col p-[14px] lg:p-5">
           {/* Foto e identificação lado a lado: o retrato fica pequeno e o texto
-              da professora, que é o conteúdo principal do card, ganha espaço. */}
+              da professora, que é o conteúdo principal do card, ganha espaço.
+              Anel: degradê roxo → lilás → areia com um filete branco antes da foto.
+              No hover (só com mouse) a foto aproxima dentro da moldura. */}
           <div class="flex items-center gap-3">
-            <Picture
-              src={professora.foto}
-              widths={LARGURAS}
-              sizes={SIZES}
-              formats={["avif", "webp"]}
-              fallbackFormat="webp"
-              alt={professora.alt}
-              loading="lazy"
-              decoding="async"
-              class:list={[
-                "aspect-[3/4] w-[112px] shrink-0 rounded-caixa object-cover",
-                professora.posicaoFoto ?? "object-center",
-              ]}
-            />
+            <span class="shrink-0 rounded-[18px] bg-[linear-gradient(140deg,var(--color-roxo-medio),var(--color-roxo-claro)_55%,var(--color-areia))] p-[3px] transition-shadow duration-300 group-hover:shadow-[0_10px_22px_-8px_rgb(82_25_138/0.5)]">
+              <span class="block overflow-hidden rounded-[15px] border-2 border-white">
+                <Picture
+                  src={professora.foto}
+                  widths={LARGURAS}
+                  sizes={SIZES}
+                  formats={["avif", "webp"]}
+                  fallbackFormat="webp"
+                  alt={professora.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class:list={[
+                    "block aspect-[3/4] w-[112px] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.08]",
+                    professora.posicaoFoto ?? "object-center",
+                  ]}
+                />
+              </span>
+            </span>
 
             <div>
               <h3 class="text-subtitulo font-semibold leading-tight text-roxo">
                 {professora.nome}
               </h3>
-              <span class="mt-2 inline-block rounded-pill bg-lavanda px-[9px] py-[4px] text-miudo font-medium text-roxo">
+              <span class="mt-2 inline-flex items-center gap-[6px] rounded-pill bg-lavanda py-[4px] pr-[9px] pl-[5px] text-miudo font-medium text-roxo">
+                {/* O texto da tag já diz o idioma; a bandeira é só visual. */}
+                <span class="flex -space-x-1" aria-hidden="true">
+                  {bandeirasDaTag[professora.tag]?.map((pais) => (
+                    <Bandeira pais={pais} tamanho="sm" class="rounded-full text-roxo ring-1 ring-lavanda" />
+                  ))}
+                </span>
                 {professora.tag}
               </span>
             </div>
@@ -174,7 +204,7 @@ const SIZES = "112px";
 
   <div class="mt-6 sm:flex sm:justify-center lg:mt-8">
     <Botao href={LINKS.professoras} class="w-full sm:w-auto sm:px-8">
-      Conhecer as 10 professoras
+      Conhecer as professoras
     </Botao>
   </div>
 </Secao>
