@@ -67,10 +67,10 @@ const marcos = [
         linha até o ícone seguinte: começa 8px depois do próprio ícone (48px,
         centrado) e termina 8px antes do próximo, somando o gap de 0.75rem.
       */}
-      <ol class="mt-10 grid grid-cols-3 gap-3">
+      <ol class="mt-10 grid grid-cols-3 gap-3" data-revelar-grupo>
         {
           marcos.map((marco, i) => (
-            <li class="relative flex flex-col items-center text-center">
+            <li data-revelar class="relative flex flex-col items-center text-center">
               {i < marcos.length - 1 && (
                 <span
                   class="absolute top-6 left-[calc(50%+2rem)] w-[calc(100%+0.75rem-4rem)] border-t-2 border-dotted border-roxo-claro"
@@ -106,7 +106,7 @@ const marcos = [
       passaporte no canto e uma rota de voo saindo por baixo. Os enfeites são
       decorativos e ficam no respiro lateral da seção (22px no mobile).
     */}
-    <div class="relative mx-auto w-full max-w-[460px] lg:order-1">
+    <div class="relative mx-auto w-full max-w-[460px] lg:order-1" data-revelar>
       <figure
         class="relative rotate-[-2.5deg] rounded-[6px] bg-white p-3 pb-16 shadow-[0_24px_50px_-20px_rgb(40_8_72/0.45)] transition-transform duration-500 ease-out hover:rotate-0 lg:p-4 lg:pb-20"
       >

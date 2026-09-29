@@ -48,7 +48,7 @@ const semQuebra = enfase && enfase.length <= MAX_ENFASE_SEM_QUEBRA ? "whitespace
 const textoEnfase = enfase?.replace(" ", " ");
 ---
 
-<div class={`${alinhamento} ${classe}`}>
+<div class={`${alinhamento} ${classe}`} data-revelar>
   <h2 class="max-w-[20ch] text-titulo font-semibold" class:list={[centro && "mx-auto"]}>
     <span class={classeInicio}>{inicio}</span>{enfase && <> <em class:list={["italic", sublinhado && classeSublinhado[sublinhado], semQuebra, classeEnfase]}>{textoEnfase}</em></>}
   </h2>

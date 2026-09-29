@@ -13,21 +13,32 @@ import NossaHistoria from "../components/NossaHistoria.astro";
 import Faq from "../components/Faq.astro";
 import Formulario from "../components/Formulario.astro";
 import Rodape from "../components/Rodape.astro";
+import Onda from "../components/Onda.astro";
 ---
 
 <Base>
   <Header />
   <main id="conteudo">
     <Hero />
+    {/*
+      Ondas só nas trocas de maior contraste (e na saída do Hero). Entre
+      creme e lavanda a linha reta quase não aparece, e onda em toda
+      passagem cansaria.
+    */}
+    <Onda de="lavanda" para="creme" forma="curva" />
     <Diferenciais />
     <ComoFunciona />
     <Idiomas />
+    <Onda de="creme" para="roxo" forma="onda" />
     <Planos />
+    <Onda de="roxo" para="areia" forma="onda" espelhar />
     <AulaExperimental />
+    <Onda de="areia" para="creme" forma="suave" />
     <Professoras />
     <Depoimentos />
     <NossaHistoria />
     <Faq />
+    <Onda de="lavanda" para="roxo" forma="onda" espelhar />
     <Formulario />
   </main>
   <Rodape />

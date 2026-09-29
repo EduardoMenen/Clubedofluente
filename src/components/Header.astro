@@ -11,23 +11,28 @@ const navegacao = [
 ];
 ---
 
-<header class="sticky top-0 z-40 border-b border-roxo/10 bg-white/95 backdrop-blur">
+{/*
+  Roxo claro (o mesmo de Planos/Formulário e do rodapé): a logo tem texto
+  branco e bolhas no roxo escuro da marca, que somem sobre o roxo escuro.
+  Sólido de propósito: com transparência o tom mudaria conforme a seção atrás.
+*/}
+<header class="sticky top-0 z-40 border-b border-white/20 bg-roxo-fundo text-white">
   <div
     class="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-[22px] py-3 sm:px-8 lg:px-12"
   >
-    <a href="#topo" aria-label="Clube do Fluente — início">
-      <Logo />
+    <a href="#topo" aria-label="Clube do Fluente — início" class="shrink-0">
+      <Logo carregamento="eager" />
     </a>
 
     <!-- Navegação desktop -->
     <nav aria-label="Principal" class="hidden lg:block">
-      <ul class="flex items-center gap-7">
+      <ul class="flex items-center gap-1 xl:gap-3">
         {
           navegacao.map((item) => (
             <li>
               <a
                 href={item.href}
-                class="text-apoio font-medium text-roxo/80 transition-colors hover:text-roxo"
+                class="rounded-pill px-3 py-1.5 text-apoio font-semibold text-white transition-colors hover:bg-white/15"
               >
                 {item.rotulo}
               </a>
@@ -42,7 +47,7 @@ const navegacao = [
     <button
       type="button"
       id="botao-menu"
-      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.75rem] bg-roxo lg:hidden"
+      class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[0.75rem] bg-white/15 transition-colors hover:bg-white/25 lg:hidden"
       aria-label="Abrir menu"
       aria-expanded="false"
       aria-controls="menu-mobile"
@@ -56,7 +61,7 @@ const navegacao = [
   </div>
 
   <!-- Painel mobile -->
-  <div id="menu-mobile" hidden class="border-t border-roxo/10 bg-white lg:hidden">
+  <div id="menu-mobile" hidden class="border-t border-white/20 bg-roxo-fundo lg:hidden">
     <nav aria-label="Principal (mobile)" class="px-[22px] py-4">
       <ul class="flex flex-col">
         {
@@ -64,7 +69,7 @@ const navegacao = [
             <li>
               <a
                 href={item.href}
-                class="block border-b border-roxo/10 py-3 text-corpo font-medium text-roxo"
+                class="block border-b border-white/20 py-3 text-corpo font-semibold text-white"
               >
                 {item.rotulo}
               </a>

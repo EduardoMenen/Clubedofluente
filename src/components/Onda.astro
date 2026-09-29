@@ -1,0 +1,48 @@
+---
+/**
+ * Transição entre duas seções: uma faixa na cor da seção de cima (`de`) com
+ * uma borda em SVG na cor da seção de baixo (`para`).
+ *
+ * Vai entre as duas <Secao> no index. O `-my-px` sobrepõe 1px de cada lado
+ * para não aparecer fresta de arredondamento entre a faixa e as seções.
+ */
+interface Props {
+  de: Cor;
+  para: Cor;
+  forma?: "onda" | "curva" | "suave";
+  /** Espelha na horizontal, para duas ondas seguidas não ficarem iguais. */
+  espelhar?: boolean;
+}
+type Cor = "lavanda" | "creme" | "roxo" | "areia";
+
+const { de, para, forma = "onda", espelhar = false } = Astro.props;
+
+/** Mesmas cores do <Secao>. */
+const cores: Record<Cor, string> = {
+  lavanda: "var(--color-lavanda)",
+  creme: "var(--color-creme)",
+  roxo: "var(--color-roxo-fundo)",
+  areia: "var(--color-areia)",
+};
+
+/** Caminhos num viewBox de 1440×80, fechados pela base (a cor de `para`). */
+const formas = {
+  onda: "M0 38C180 70 360 76 560 52S920 4 1120 18 1360 58 1440 46V80H0Z",
+  curva: "M0 80C360 12 1080 12 1440 80Z",
+  suave: "M0 56C320 30 520 22 760 34S1200 70 1440 44V80H0Z",
+};
+---
+
+<div
+  class="relative -my-px h-[clamp(1.5rem,4.5vw,4rem)]"
+  style={`background-color: ${cores[de]}`}
+  aria-hidden="true"
+>
+  <svg
+    viewBox="0 0 1440 80"
+    preserveAspectRatio="none"
+    class:list={["absolute inset-0 block h-full w-full", espelhar && "-scale-x-100"]}
+  >
+    <path d={formas[forma]} fill={cores[para]} />
+  </svg>
+</div>

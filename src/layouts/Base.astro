@@ -21,7 +21,7 @@ const base = import.meta.env.BASE_URL;
     <title>{titulo}</title>
     <meta name="description" content={descricao} />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-    <meta name="theme-color" content="#52198a" />
+    <meta name="theme-color" content="#8a6ae5" />
 
     {/* Prévia para aprovação: fora do Google até o site ser o definitivo.
         Remover junto com o `base` quando entrar no domínio próprio. */}
@@ -42,5 +42,10 @@ const base = import.meta.env.BASE_URL;
       Pular para o conteúdo
     </a>
     <slot />
+
+    {/* Animações de entrada ao rolar (ver src/scripts/revelar.ts). */}
+    <script>
+      import "../scripts/revelar.ts";
+    </script>
   </body>
 </html>

@@ -1,0 +1,26 @@
+---
+/**
+ * Pausar/retomar a passagem automática de um carrossel (WCAG 2.2.2).
+ * O comportamento está em src/scripts/autoplay-carrossel.ts, que troca o
+ * rótulo e o ícone; aqui o estado inicial é "passando" (ícone de pausa).
+ */
+interface Props {
+  class?: string;
+}
+const { class: classe = "" } = Astro.props;
+---
+
+<button
+  type="button"
+  class={`flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-roxo/10 text-roxo transition-colors hover:bg-roxo/20 ${classe}`}
+  aria-label="Pausar a passagem automática"
+  data-autoplay-botao
+>
+  <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="currentColor" aria-hidden="true" data-icone-pausar>
+    <rect x="6" y="5" width="4" height="14" rx="1.2" />
+    <rect x="14" y="5" width="4" height="14" rx="1.2" />
+  </svg>
+  <svg viewBox="0 0 24 24" class="hidden h-3.5 w-3.5" fill="currentColor" aria-hidden="true" data-icone-retomar>
+    <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.2-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" />
+  </svg>
+</button>

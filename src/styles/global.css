@@ -106,6 +106,31 @@
   }
 }
 
+/* ------------------------------------------------------------------
+   Entrada ao rolar (fade + leve subida). Quem liga é src/scripts/revelar.ts:
+   - `data-revelar` marca o elemento que entra;
+   - `data-revelar-grupo` no pai faz os filhos entrarem juntos, escalonados.
+   Nada fica escondido sem a classe `revelar-ativo` no <html>, que o script
+   só põe com JS rodando e sem prefers-reduced-motion — então sem JS, ou com
+   movimento reduzido, a página aparece inteira e parada.
+   É `animation` (e não `transition`) para não brigar com as transições de
+   hover que vários cards já têm.
+   ------------------------------------------------------------------ */
+@keyframes revelar {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+.revelar-ativo [data-revelar]:not(.revelado) {
+  opacity: 0;
+}
+
+.revelar-ativo [data-revelar].animar {
+  animation: revelar 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--atraso, 0ms) both;
+}
+
 /*
  * Sublinhado "à mão" do trecho em itálico dos títulos.
  * É background (e não ::after) para acompanhar a quebra de linha: com

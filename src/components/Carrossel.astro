@@ -1,4 +1,6 @@
 ---
+import BotaoAutoplay from "./BotaoAutoplay.astro";
+
 /**
  * Carrossel mobile com scroll-snap nativo (sem biblioteca).
  * No desktop o trilho vira grade e os indicadores somem — a menos que
@@ -43,6 +45,7 @@ const {
         !sempreCarrossel && ["lg:overflow-visible", gradeDesktop, "lg:[&>*]:w-auto"],
       ]}
       data-carrossel
+      data-revelar-grupo
       role="group"
       aria-label={rotulo}
       tabindex="0"
@@ -93,21 +96,23 @@ const {
     }
   </div>
 
+  {/* Bolinhas + pausa da passagem automática; somem juntas quando vira grade. */}
   <div
-    class:list={["mt-4 flex justify-center gap-[6px]", !sempreCarrossel && "lg:hidden"]}
-    data-indicadores
-    aria-hidden="true"
+    class:list={["mt-4 flex items-center justify-center gap-3", !sempreCarrossel && "lg:hidden"]}
   >
-    {
-      Array.from({ length: itens }).map((_, i) => (
-        <span
-          class:list={[
-            "h-[7px] rounded-full transition-all duration-200",
-            i === 0 ? "w-[22px] bg-current" : "w-[7px] bg-current opacity-30",
-          ]}
-        />
-      ))
-    }
+    <div class="flex gap-[6px]" data-indicadores aria-hidden="true">
+      {
+        Array.from({ length: itens }).map((_, i) => (
+          <span
+            class:list={[
+              "h-[7px] rounded-full transition-all duration-200",
+              i === 0 ? "w-[22px] bg-current" : "w-[7px] bg-current opacity-30",
+            ]}
+          />
+        ))
+      }
+    </div>
+    <BotaoAutoplay />
   </div>
 </div>
 
@@ -145,6 +150,8 @@ const {
 </style>
 
 <script>
+  import { autoplayCarrossel } from "../scripts/autoplay-carrossel";
+
   const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
   // O CSS global já zera transições sob reduced-motion, mas não o scroll programático.
   const comportamento = (): ScrollBehavior => (reduzido.matches ? "auto" : "smooth");
@@ -177,16 +184,27 @@ const {
       cards.forEach((card) => observador.observe(card));
     }
 
-    // Setas: só existem no modo `sempreCarrossel`.
-    const anterior = raiz?.querySelector<HTMLButtonElement>("[data-anterior]");
-    const proximo = raiz?.querySelector<HTMLButtonElement>("[data-proximo]");
-    if (!anterior && !proximo) return;
-
     /** Um card + o gap, lido do layout real (nada hardcoded). */
     const passo = () => {
       const gap = parseFloat(getComputedStyle(trilho).columnGap) || 0;
       return cards[0].offsetWidth + gap;
     };
+
+    // Passagem automática. Quando o trilho vira grade (lg), não há rolagem e
+    // ela simplesmente não avança.
+    if (raiz) {
+      autoplayCarrossel({
+        raiz,
+        trilho,
+        passo,
+        botao: raiz.querySelector<HTMLButtonElement>("[data-autoplay-botao]"),
+      });
+    }
+
+    // Setas: só existem no modo `sempreCarrossel`.
+    const anterior = raiz?.querySelector<HTMLButtonElement>("[data-anterior]");
+    const proximo = raiz?.querySelector<HTMLButtonElement>("[data-proximo]");
+    if (!anterior && !proximo) return;
 
     anterior?.addEventListener("click", () =>
       trilho.scrollBy({ left: -passo(), behavior: comportamento() })

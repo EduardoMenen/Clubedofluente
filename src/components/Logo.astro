@@ -1,16 +1,39 @@
 ---
+import { Picture } from "astro:assets";
+import logo from "../assets/logo-clube-do-fluente.png";
+
+/**
+ * Logo oficial (PNG com fundo transparente, recortado do arquivo do Clube).
+ * O texto e duas das bolhas são brancos, e as outras duas são do roxo escuro
+ * da marca (#52198a): a logo pede o roxo claro (roxo-fundo) de header e
+ * rodapé. Sobre o roxo escuro essas bolhas somem.
+ *
+ * `tamanho` fixa a ALTURA; a largura sai da proporção (~3:1).
+ * `carregamento`: o header fica no topo da página, então lá é "eager".
+ */
 interface Props {
-  /** "escuro" para fundos claros, "claro" para fundo roxo. */
-  tom?: "escuro" | "claro";
+  tamanho?: "header" | "rodape";
+  carregamento?: "eager" | "lazy";
   class?: string;
 }
-const { tom = "escuro", class: classe = "" } = Astro.props;
-const corFluente = tom === "escuro" ? "text-roxo" : "text-white";
+const { tamanho = "header", carregamento = "lazy", class: classe = "" } = Astro.props;
+
+/** Alturas em CSS px → larguras para 1×, 2× e 3×. */
+const medidas = {
+  header: { altura: "h-9 lg:h-10", larguras: [121, 242, 363], sizes: "121px" },
+  rodape: { altura: "h-12", larguras: [145, 290, 435], sizes: "145px" },
+};
+const m = medidas[tamanho];
 ---
 
-<span class={`block leading-none ${classe}`}>
-  <span class="block font-display text-[0.8125rem] italic text-roxo-claro">clube do</span>
-  <span class={`block font-display text-[1.5rem] font-semibold tracking-tight ${corFluente}`}>
-    Fluente
-  </span>
-</span>
+<Picture
+  src={logo}
+  widths={m.larguras}
+  sizes={m.sizes}
+  formats={["avif", "webp"]}
+  fallbackFormat="png"
+  alt="Clube do Fluente"
+  loading={carregamento}
+  decoding="async"
+  class={`block w-auto ${m.altura} ${classe}`}
+/>

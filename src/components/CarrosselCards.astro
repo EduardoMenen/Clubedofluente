@@ -12,6 +12,7 @@
  * - Sem loop infinito e sem lib: scroll-snap nativo + JS vanilla.
  */
 import { Picture } from "astro:assets";
+import BotaoAutoplay from "./BotaoAutoplay.astro";
 
 export interface CardCarrossel {
   /** Ícone curto (emoji ou 1–2 caracteres). Decorativo. */
@@ -63,6 +64,7 @@ const SIZES = "min(80vw, 327px)";
 >
   <div class="relative">
     <ul
+      data-revelar-grupo
       class="trilho flex snap-x snap-mandatory gap-4 overflow-x-auto px-[max(1rem,calc((100%-var(--slide-w))/2))] py-1"
       data-trilho
       tabindex="0"
@@ -70,6 +72,7 @@ const SIZES = "min(80vw, 327px)";
       {
         cards.map((card, i) => (
           <li
+            data-revelar
             class="slide relative aspect-[327/600] h-auto w-[var(--slide-w)] flex-none snap-center rounded-card bg-roxo"
             aria-roledescription="slide"
             aria-label={`${i + 1} de ${cards.length}`}
@@ -144,29 +147,34 @@ const SIZES = "min(80vw, 327px)";
     seriam bolinhas que não acendem nunca. As setas dão o retorno ali.
     Mesma escolha do Carrossel.astro em Depoimentos e Professoras.
   */}
-  <ul class="mt-4 flex justify-center gap-[2px] lg:hidden">
-    {
-      cards.map((card, i) => (
-        <li>
-          <button
-            type="button"
-            class="flex cursor-pointer items-center justify-center p-2"
-            aria-label={`Ir para o card ${i + 1}: ${card.titulo}`}
-            aria-current={i === 0 ? "true" : undefined}
-            data-ponto
-          >
-            <span
-              class:list={[
-                "block h-[7px] rounded-full bg-current transition-all duration-200",
-                i === 0 ? "w-[22px]" : "w-[7px] opacity-30",
-              ]}
-              aria-hidden="true"
-            />
-          </button>
-        </li>
-      ))
-    }
-  </ul>
+  {/* Bolinhas (até md) + pausa da passagem automática (sempre: no desktop o
+      trilho também rola sozinho, com as setas). */}
+  <div class="mt-4 flex items-center justify-center gap-2">
+    <ul class="flex justify-center gap-[2px] lg:hidden">
+      {
+        cards.map((card, i) => (
+          <li>
+            <button
+              type="button"
+              class="flex cursor-pointer items-center justify-center p-2"
+              aria-label={`Ir para o card ${i + 1}: ${card.titulo}`}
+              aria-current={i === 0 ? "true" : undefined}
+              data-ponto
+            >
+              <span
+                class:list={[
+                  "block h-[7px] rounded-full bg-current transition-all duration-200",
+                  i === 0 ? "w-[22px]" : "w-[7px] opacity-30",
+                ]}
+                aria-hidden="true"
+              />
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+    <BotaoAutoplay />
+  </div>
 </div>
 
 <style>
@@ -261,6 +269,8 @@ const SIZES = "min(80vw, 327px)";
 </style>
 
 <script>
+  import { autoplayCarrossel } from "../scripts/autoplay-carrossel";
+
   const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
   // O CSS global já zera transições sob reduced-motion, mas não o scroll programático.
   const comportamento = (): ScrollBehavior => (reduzido.matches ? "auto" : "smooth");
@@ -280,6 +290,13 @@ const SIZES = "min(80vw, 327px)";
       const gap = parseFloat(getComputedStyle(trilho).columnGap) || 0;
       return slides[0].offsetWidth + gap;
     };
+
+    autoplayCarrossel({
+      raiz,
+      trilho,
+      passo,
+      botao: raiz.querySelector<HTMLButtonElement>("[data-autoplay-botao]"),
+    });
 
     /**
      * Slide ativo = o que tem o centro mais perto do centro do trilho.

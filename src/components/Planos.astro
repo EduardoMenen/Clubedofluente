@@ -72,10 +72,11 @@ const modalidades = [
     </Fragment>
   </TituloSecao>
 
-  <div class="mt-9 grid gap-3 lg:mt-12 lg:grid-cols-2 lg:gap-5">
+  <div class="mt-9 grid gap-3 lg:mt-12 lg:grid-cols-2 lg:gap-5" data-revelar-grupo>
     {
       modalidades.map((modalidade) => (
         <article
+          data-revelar
           class:list={[
             // Hover sobe o card; `hover:` do Tailwind só vale em aparelho com mouse.
             "p-[18px] transition duration-200 ease-out hover:-translate-y-1.5 lg:p-6",
@@ -142,8 +143,8 @@ const modalidades = [
   </div>
 
   <!-- Faixa de investimento -->
-  <div class="mt-3 grid gap-3 lg:mt-5 lg:grid-cols-[1.4fr_1fr] lg:gap-5">
-    <div class="card-vidro-escuro p-5 text-white lg:p-8">
+  <div class="mt-3 grid gap-3 lg:mt-5 lg:grid-cols-[1.4fr_1fr] lg:gap-5" data-revelar-grupo>
+    <div data-revelar class="card-vidro-escuro p-5 text-white lg:p-8">
       <p class="text-apoio font-medium text-white/80">Planos a partir de</p>
       <p class="mt-1 font-display text-[2.125rem] font-semibold leading-none lg:text-[2.75rem]">
         R$ 180 <span class="text-subtitulo font-sans font-medium text-white/80">/mês</span>
@@ -157,7 +158,7 @@ const modalidades = [
     </div>
 
     <!-- Secundario: avulsas e intensivos -->
-    <div class="card-vidro-escuro p-5 text-white lg:p-8">
+    <div data-revelar class="card-vidro-escuro p-5 text-white lg:p-8">
       <p class="text-eyebrow font-semibold uppercase tracking-[0.12em] text-white/80">
         Também é possível
       </p>

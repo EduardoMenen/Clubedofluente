@@ -78,7 +78,7 @@ const ESTRELA =
   >
     {
       depoimentos.map((depoimento) => (
-        <figure class="card-vidro relative flex w-[304px] flex-col p-[18px] lg:p-8">
+        <figure data-revelar class="card-vidro relative flex w-[304px] flex-col p-[18px] lg:p-8">
           {/* Aspas grandes no canto; decorativas. */}
           <span
             class="pointer-events-none absolute top-1 right-5 font-display text-[5.5rem] leading-none text-roxo-claro select-none lg:top-3 lg:right-7 lg:text-[6.5rem]"
@@ -114,7 +114,7 @@ const ESTRELA =
     }
   </Carrossel>
 
-  <div class="mt-14 lg:mt-20">
+  <div class="mt-14 lg:mt-20" data-revelar>
     <h3 class="flex items-center gap-3 text-subtitulo font-semibold text-roxo">
       <span
         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-roxo text-white"
@@ -156,7 +156,7 @@ const ESTRELA =
   >
     {
       prints.map((print, i) => (
-        <figure class:list={["w-[280px] self-start", print.grade]}>
+        <figure data-revelar class:list={["w-[280px] self-start", print.grade]}>
           <button
             type="button"
             class="group relative block w-full cursor-zoom-in rounded-[22px] bg-white p-2 text-left shadow-card transition duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_18px_36px_-14px_rgb(82_25_138/0.35)]"
